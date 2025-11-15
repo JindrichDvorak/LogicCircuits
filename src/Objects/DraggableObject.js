@@ -1,30 +1,13 @@
-export class LogicContainer {
-    constructor(world, id, x, y, width, height) {
+export class DraggableObject {
+    constructor(world, x, y) {
         this.world = world;
-        this.id = id;
         this.position = { x: x, y: y };
-        this.size = { width: width, height: height };
 
         this.element;
 
         this.isDragging = false;
         this.mouseOffset = { x: 0, y: 0 };
-        this.maxPosition = { x: 0, y: 0 };
-
-        this.createElement();
-        this.registerEvents();
-    }
-
-    createElement() {
-        this.element = document.createElement("div");
-        this.element.classList.add("logicContainer");
-        this.element.style.left = `${this.position.x}px`;
-        this.element.style.top = `${this.position.y}px`;
-        this.element.style.width = `${this.size.width}px`;
-        this.element.style.height = `${this.size.height}px`;
-
-        this.element.innerHTML = ``;
-        this.world.appendChild(this.element);
+        this.isFixed = false;
     }
 
     registerEvents() {
@@ -44,6 +27,7 @@ export class LogicContainer {
     }
 
     onMouseMove(e) {
+        if(this.isFixed) return;
         if(!this.isDragging) return;
 
         this.position = { 
