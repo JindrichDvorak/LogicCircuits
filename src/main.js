@@ -1,6 +1,9 @@
 import { Camera } from "./Camera";
 import { LogicContainer } from "./Objects/LogicContainers/LogicContainer";
-import { Joint } from "./Objects/Joints/Joint";
+import { Node } from "./Objects/Nodes/Node";
+
+import { stateManager } from "./State/StateManager";
+
 
 const scene = document.getElementById("scene");
 const world = document.getElementById("world");
@@ -19,5 +22,21 @@ addButton.addEventListener("click", () => {
 
 addJoint.addEventListener("click", () => {
   const coords = camera.screenToWorldCoords(100, 100);
-  const containter = new Joint(world, coords.x, coords.y, 100, 50);
+  const containter = new Node(world, coords.x, coords.y, 10, 10);
+});
+
+const UI = document.getElementById("UI");
+UI.classList.add("UI");
+
+UI.innerHTML = `
+  <div>${stateManager.cursorState.get()}</div>
+  <div>${stateManager.newState.get()}</div>
+  <div>${stateManager.mouseState.get()}</div>
+`;
+stateManager.mouseState.subscribe(() => {
+  UI.innerHTML = `
+    <div>${stateManager.cursorState.get()}</div>
+    <div>${stateManager.newState.get()}</div>
+    <div>${stateManager.mouseState.get()}</div>
+  `;
 });

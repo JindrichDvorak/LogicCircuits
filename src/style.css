@@ -16,9 +16,20 @@
     border: solid;
 }
 
-.joint {
+.node {
     position: absolute;
     border: solid;
-    border-color: red;
     border-radius: 50%;
+}
+
+.node:hover {
+    background-color: grey;
+}
+
+.UI {
+    position: absolute;
+    border: solid;
+    width: 200px;
+    height: 100px;
+    right: 0px;
 }

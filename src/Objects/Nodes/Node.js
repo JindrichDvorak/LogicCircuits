@@ -1,4 +1,7 @@
-export class LogicContainer {
+import { CursorState, stateManager } from "../../State/StateManager";
+
+
+export class Node {
     constructor(world, x, y, width, height) {
         this.world = world;
         this.position = { x: x, y: y };
@@ -19,7 +22,7 @@ export class LogicContainer {
 
     createElement() {
         this.element = document.createElement("div");
-        this.element.classList.add("logicContainer");
+        this.element.classList.add("node");
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
         this.element.style.width = `${this.size.width}px`;
@@ -27,10 +30,6 @@ export class LogicContainer {
 
         this.element.innerHTML = ``;
         this.world.appendChild(this.element);
-
-        /*const input = new Node(this.world, 0, 0, 10, 10);
-        this.inputs.push(input);
-        this.element.appendChild(input.element);*/
     }
 
     registerEvents() {
@@ -42,7 +41,9 @@ export class LogicContainer {
 
     onMouseDown(e) {
         if(e.button === 0) {
+            stateManager.cursorState.set(0);
             this.holdTimer = setTimeout(() => {
+                stateManager.cursorState.set(0);
                 this.isDragging = true;
             }, this.holdTime);
 
@@ -51,7 +52,7 @@ export class LogicContainer {
                 y: e.clientY - this.element.offsetTop 
             };
             e.stopPropagation();
-        }
+        } 
     }
 
     onMouseMove(e) {
@@ -69,6 +70,7 @@ export class LogicContainer {
 
     onMouseUp(e) {
         if(e.button === 0) {
+            stateManager.cursorState.set(0);
             this.isDragging = false;
             clearTimeout(this.holdTimer);
         }
