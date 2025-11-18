@@ -12,6 +12,8 @@
 }
 
 .logicContainer {
+    user-select: none;
+
     position: absolute;
     background: white;
     border: solid 2px;
@@ -46,6 +48,8 @@
 }
 
 .node {
+    user-select: none;
+
     position: absolute;
     border: solid 2px;
     border-radius: 50%;

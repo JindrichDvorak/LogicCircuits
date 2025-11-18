@@ -76,8 +76,6 @@ export class Node {
         if(e.button === 0) {
             if(this.isDragging) {
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
-            } else {
-                stateManager.interactionMode.set(InteractionMode.CONNECTING);
             }
             
             this.element.classList.remove("animate");
