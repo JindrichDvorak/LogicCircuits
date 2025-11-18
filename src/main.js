@@ -2,7 +2,7 @@ import { Camera } from "./Camera";
 import { LogicContainer } from "./Objects/LogicContainers/LogicContainer";
 import { Node } from "./Objects/Nodes/Node";
 
-import { stateManager } from "./State/StateManager";
+import { debugUILogic } from "./debugUI";
 
 
 const scene = document.getElementById("scene");
@@ -11,6 +11,9 @@ const addButton = document.getElementById("addRect");
 const addJoint = document.getElementById("addJoint");
 
 const containers = [];
+const nodes = [];
+
+let counter = 0;
 
 const camera = new Camera(scene, world, 50000, 50000, 1);
 
@@ -22,21 +25,8 @@ addButton.addEventListener("click", () => {
 
 addJoint.addEventListener("click", () => {
   const coords = camera.screenToWorldCoords(100, 100);
-  const containter = new Node(world, coords.x, coords.y, 10, 10);
+  const node = new Node(world, counter, coords.x, coords.y, 25, 25);
+  counter++;
 });
 
-const UI = document.getElementById("UI");
-UI.classList.add("UI");
-
-UI.innerHTML = `
-  <div>${stateManager.cursorState.get()}</div>
-  <div>${stateManager.newState.get()}</div>
-  <div>${stateManager.mouseState.get()}</div>
-`;
-stateManager.mouseState.subscribe(() => {
-  UI.innerHTML = `
-    <div>${stateManager.cursorState.get()}</div>
-    <div>${stateManager.newState.get()}</div>
-    <div>${stateManager.mouseState.get()}</div>
-  `;
-});
+debugUILogic();

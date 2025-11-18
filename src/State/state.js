@@ -1,6 +1,6 @@
 export function state(initialValue) {
     let value = initialValue;
-    const reactions = [];
+    const reactions = new Set();
 
     function get() {
         return value;
@@ -15,11 +15,15 @@ export function state(initialValue) {
     }
 
     function subscribe(func) {
-        reactions.push(func);
+        reactions.add(func);
+
+        return () => {
+            unsubscribe(func);
+        };
     }
 
     function unsubscribe(func) {
-        reactions.filter((reaction) => reaction !== func);
+        reactions.delete(func);
     }
 
     return { get, set, subscribe, unsubscribe };

@@ -10,7 +10,7 @@ export class LogicContainer {
         this.isDragging = false;
         this.isFixed = false;
         
-        this.holdTime = 200;
+        this.holdTime = 500;
         this.holdTimer;
 
         this.createElement();
@@ -42,6 +42,7 @@ export class LogicContainer {
 
     onMouseDown(e) {
         if(e.button === 0) {
+            this.element.classList.add("animate");
             this.holdTimer = setTimeout(() => {
                 this.isDragging = true;
             }, this.holdTime);
@@ -69,6 +70,7 @@ export class LogicContainer {
 
     onMouseUp(e) {
         if(e.button === 0) {
+            this.element.classList.remove("animate");
             this.isDragging = false;
             clearTimeout(this.holdTimer);
         }
@@ -76,5 +78,8 @@ export class LogicContainer {
 
     onMouseLeave(e) {
         clearTimeout(this.holdTimer);
+        if(!this.isDragging) {
+            this.element.classList.remove("animate");
+        }
     }
 }

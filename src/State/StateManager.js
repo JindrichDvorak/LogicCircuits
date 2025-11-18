@@ -1,17 +1,24 @@
 import { state, stateCollection, stateExpression } from "./state";
 
 
-export const CursorState = Object.freeze({
-    NORMAL: 1,
-    DRAGGING: 2,
-    CONNECTING: 3,
+export const InteractionMode = Object.freeze({
+    NORMAL: "Normal",
+    DRAGGING: "Dragging",
+    CONNECTING: "Connecting",
+});
+
+export const Elements = Object.freeze({
+    WORLD: "World",
+    LOGIC_CONTAINER: "Logic container",
+    NODE: "Node",
 });
 
 class StateManager {
     constructor() {
-        this.cursorState = state(0);
-        this.newState = state(-1);
-        this.mouseState = stateCollection(this.cursorState, this.newState);
+        this.interactionMode = state(InteractionMode.NORMAL);
+        
+        this.interactedElementType = state(Elements.WORLD);
+        this.interactedElementId = state("Undefined");
     }
 }
 

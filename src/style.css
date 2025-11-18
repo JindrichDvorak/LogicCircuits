@@ -13,23 +13,80 @@
 
 .logicContainer {
     position: absolute;
-    border: solid;
+    background: white;
+    border: solid 2px;
+}
+
+@property --lC-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.logicContainer.animate::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 5px;
+    background-image: conic-gradient(orange var(--lC-angle), transparent 0deg);
+    animation: 0.5s lC-load linear forwards;
+}
+
+@keyframes lC-load {
+    from {
+        --lC-angle: 0deg;
+    } to {
+        --lC-angle: 360deg;
+    }
 }
 
 .node {
     position: absolute;
-    border: solid;
+    border: solid 2px;
     border-radius: 50%;
+    background: white;
 }
 
-.node:hover {
-    background-color: grey;
+@property --n-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
 }
 
-.UI {
+.node.animate::after {
+    content: "";
     position: absolute;
-    border: solid;
+    width: 100%;
+    height: 100%;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    z-index: -1;
+    padding: 5px;
+    background-image: conic-gradient(orange var(--n-angle), transparent 0deg);
+    animation: 0.5s n-load linear forwards;
+}
+
+@keyframes n-load {
+    from {
+        --n-angle: 0deg;
+    } to {
+        --n-angle: 360deg;
+    }
+}
+
+.debugUI {
+    position: absolute;
+    border: solid 1px;
     width: 200px;
     height: 100px;
     right: 0px;
+    background: white;
+    padding: 5px;
 }

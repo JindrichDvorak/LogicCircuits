@@ -10,7 +10,7 @@
   </head>
 
   <body style="position: relative; height: 90vh; min-height: 600px;">
-    <div id="header" style="height: 25px; border: solid 1px;">
+    <div id="header" style="height: 25px; border: solid 1px; text-align: center;">
       Head
     </div>
     <div style="display: flex; flex-direction: row; height: 95%;">
@@ -18,11 +18,13 @@
         <button id="addRect" style="width: 100%;">AddRect</button>
         <button id="addJoint" style="width: 100%;">AddJoint</button>
       </div>
+      <!-- * Camera and rendering -->
       <div id="scene" style="position: relative; flex-grow: 1; overflow: hidden; 
         border: solid 1px;">
         <div id="world" style="position: relative;"></div>
       </div>
-      <div id="UI" style="position: absolute;"></div>
+      <!-- TODO: Debug UI -->
+      <div id="debugUI"></div>
     </div>
     
     <script type="module" src="/src/main.js"></script>
