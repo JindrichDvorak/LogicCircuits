@@ -25,7 +25,7 @@
     inherits: false;
 }
 
-.logicContainer.animate::after {
+.logicContainer.animate::before {
     content: "";
     position: absolute;
     width: 100%;
@@ -33,10 +33,10 @@
     left: 50%;
     top: 50%;
     translate: -50% -50%;
-    z-index: -1;
     padding: 5px;
     background-image: conic-gradient(orange var(--lC-angle), transparent 0deg);
     animation: 0.5s lC-load linear forwards;
+    z-index: -1;
 }
 
 @keyframes lC-load {
@@ -62,7 +62,7 @@
     inherits: false;
 }
 
-.node.animate::after {
+.node.animate::before {
     content: "";
     position: absolute;
     width: 100%;
@@ -71,10 +71,10 @@
     top: 50%;
     translate: -50% -50%;
     border-radius: 50%;
-    z-index: -1;
     padding: 5px;
     background-image: conic-gradient(orange var(--n-angle), transparent 0deg);
     animation: 0.5s n-load linear forwards;
+    z-index: -1;
 }
 
 @keyframes n-load {

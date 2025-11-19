@@ -30,7 +30,7 @@ export class Node {
         this.element.style.height = `${this.size.height}px`;
 
         this.element.innerHTML = `
-            <div style="text-align: center;">${this.id}</div>
+            <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${this.id}</div>
         `;
         this.world.appendChild(this.element);
     }

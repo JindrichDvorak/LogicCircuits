@@ -13,20 +13,23 @@ const addJoint = document.getElementById("addJoint");
 const containers = [];
 const nodes = [];
 
-let counter = 0;
+let containerCounter = 0;
+let nodeCounter = 0;
 
 const camera = new Camera(scene, world, 50000, 50000, 1);
 
 addButton.addEventListener("click", () => {
   const coords = camera.screenToWorldCoords(100, 100);
-  const containter = new LogicContainer(world, coords.x, coords.y, 100, 50);
+  const containter = new LogicContainer(world, containerCounter, coords.x, coords.y, 100, 50);
   containers.push(containter);
+  containerCounter++;
 });
 
 addJoint.addEventListener("click", () => {
   const coords = camera.screenToWorldCoords(100, 100);
-  const node = new Node(world, counter, coords.x, coords.y, 25, 25);
-  counter++;
+  const node = new Node(world, nodeCounter, coords.x, coords.y, 25, 25);
+  nodes.push(node);
+  nodeCounter++;
 });
 
 debugUILogic();

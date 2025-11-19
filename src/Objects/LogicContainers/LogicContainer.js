@@ -1,6 +1,7 @@
 export class LogicContainer {
-    constructor(world, x, y, width, height) {
+    constructor(world, id, x, y, width, height) {
         this.world = world;
+        this.id = id;
         this.position = { x: x, y: y };
         this.size = { width: width, height: height };
 
@@ -25,7 +26,9 @@ export class LogicContainer {
         this.element.style.width = `${this.size.width}px`;
         this.element.style.height = `${this.size.height}px`;
 
-        this.element.innerHTML = ``;
+        this.element.innerHTML = `
+            <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${this.id}</div>
+        `;
         this.world.appendChild(this.element);
 
         /*const input = new Node(this.world, 0, 0, 10, 10);
