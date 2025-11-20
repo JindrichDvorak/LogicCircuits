@@ -25,7 +25,7 @@
     inherits: false;
 }
 
-.logicContainer.animate::before {
+.logicContainer.animate::after {
     content: "";
     position: absolute;
     width: 100%;
@@ -62,7 +62,7 @@
     inherits: false;
 }
 
-.node.animate::before {
+.node.animate::after {
     content: "";
     position: absolute;
     width: 100%;
