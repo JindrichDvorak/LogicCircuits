@@ -19,6 +19,7 @@ class StateManager {
         
         this.interactedElementType = state(Elements.WORLD);
         this.interactedElementId = state("Undefined");
+        this.interactionTrigger = state();
     }
 }
 

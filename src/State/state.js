@@ -6,11 +6,14 @@ export function state(initialValue) {
         return value;
     }
 
+    function signal(signalValue) {
+        reactions.forEach((reaction) => reaction(signalValue));
+    }
+
     function set(newValue) {
         if(value !== newValue) {
             value = newValue;
-
-            reactions.forEach((reaction) => reaction(value));
+            signal(value);
         }
     }
 
@@ -26,7 +29,7 @@ export function state(initialValue) {
         reactions.delete(func);
     }
 
-    return { get, set, subscribe, unsubscribe };
+    return { get, set, subscribe, unsubscribe, signal };
 }
 
 export function stateExpression(expression, ...values) {

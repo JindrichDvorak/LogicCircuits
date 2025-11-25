@@ -1,4 +1,4 @@
-import { InteractionMode, stateManager } from "../../State/StateManager";
+import { Elements, InteractionMode, stateManager } from "../../State/StateManager";
 
 
 export class Node {
@@ -45,9 +45,16 @@ export class Node {
     onMouseDown(e) {
         if(e.button === 0) {
             stateManager.interactionMode.set(InteractionMode.CONNECTING);
+            stateManager.interactedElementType.set(Elements.NODE);
+            stateManager.interactedElementId.set(this.id);
+            stateManager.interactionTrigger.signal();
+            
             this.element.classList.add("animate");
+
             this.holdTimer = setTimeout(() => {
                 stateManager.interactionMode.set(InteractionMode.DRAGGING);
+                stateManager.interactionTrigger.signal();
+
                 this.isDragging = true;
             }, this.holdTime);
 
@@ -76,6 +83,7 @@ export class Node {
         if(e.button === 0) {
             if(this.isDragging) {
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
+                stateManager.interactionTrigger.signal();
             }
             
             this.element.classList.remove("animate");
