@@ -18,8 +18,33 @@ class StateManager {
         this.interactionMode = state(InteractionMode.NORMAL);
         
         this.interactedElementType = state(Elements.WORLD);
+        this.interactedElementSubtype = state("Undefined");
         this.interactedElementId = state("Undefined");
         this.interactionTrigger = state();
+
+        this.inputNodeId = state(-1);
+        this.connectingNodeId = state(-1);
+        this.lastNodeId = state(-1);
+        this.currentNodeId = state(-1);
+        this.parentNodeId = state(-1);
+        this.childNodeIds = state([]);
+    }
+
+    setDefaultState() {
+        this.interactionMode = state(InteractionMode.NORMAL);
+        
+        this.interactedElementType = state(Elements.WORLD);
+        this.interactedElementSubtype = state("Undefined");
+        this.interactedElementId = state("Undefined");
+
+        this.inputNodeId = state(-1);
+        this.connectingNodeId = state(-1);
+        this.lastNodeId = state(-1);
+        this.currentNodeId = state(-1);
+        this.parentNodeId = state(-1);
+        this.childNodeIds = state([]);
+
+        this.interactionTrigger.signal();
     }
 }
 

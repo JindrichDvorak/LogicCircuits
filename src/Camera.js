@@ -1,6 +1,5 @@
 export class Camera {
-    constructor(scene, world, x, y, zoom) {
-        this.scene = scene;
+    constructor(world, x, y, zoom) {
         this.world = world;
         this.position = { x: x, y: y };
 
@@ -28,11 +27,11 @@ export class Camera {
     }
 
     registerEvents() {
-        this.scene.addEventListener("mousedown", (e) => this.onMouseDown(e));
+        this.world.addEventListener("mousedown", (e) => this.onMouseDown(e));
         window.addEventListener("mousemove", (e) => this.onMouseMove(e));
         window.addEventListener("mouseup", (e) => this.onMouseUp(e));
 
-        this.scene.addEventListener("wheel", (e) => this.onMouseWheel(e));
+        this.world.addEventListener("wheel", (e) => this.onMouseWheel(e));
     }
 
     onMouseDown(e) {

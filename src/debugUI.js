@@ -1,4 +1,4 @@
-import { stateManager } from "./State/StateManager";
+import { InteractionMode, stateManager } from "./State/StateManager";
 
 
 export function debugUILogic() {
@@ -9,8 +9,8 @@ export function debugUILogic() {
         <div>Interaction:</div>
         <ul>
             <li>Mode: ${stateManager.interactionMode.get()}</li>
-            <li>Element type: ${stateManager.interactedElementType.get()}</li>
-            <li>Element id: ${stateManager.interactedElementId.get()}</li>
+            <li>Element type: ${stateManager.interactedElementType.get()} 
+                (${stateManager.interactedElementSubtype.get()}-${stateManager.interactedElementId.get()})</li>
         </ul>
     `;
 
@@ -19,10 +19,35 @@ export function debugUILogic() {
             <div>Interaction:</div>
             <ul>
                 <li>Mode: ${stateManager.interactionMode.get()}</li>
-                <li>Element type: ${stateManager.interactedElementType.get()}</li>
-                <li>Element id: ${stateManager.interactedElementId.get()}</li>
+                <li>Element type: ${stateManager.interactedElementType.get()} 
+                    (${stateManager.interactedElementId.get()})</li>
             </ul>
         `;
-        console.log("I have been redrawn!");
+        if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
+            let childNodeString = "<ul>";
+            stateManager.childNodeIds.get().forEach((childId) => {
+                childNodeString += `<li>${childId}</li>`;
+            });
+            childNodeString += "</ul>";
+
+            debugUI.innerHTML = `
+                <div>Interaction:</div>
+                <ul>
+                    <li>Mode: ${stateManager.interactionMode.get()}</li>
+                    <li>Element type: ${stateManager.interactedElementType.get()} 
+                        (${stateManager.interactedElementId.get()})</li>
+                </ul>
+                <div>Connecting:</div>
+                <ul>
+                    <li>Input: ${stateManager.inputNodeId.get()}</li>
+                    <li>Connecting: ${stateManager.connectingNodeId.get()}</li>
+                    <li>Last: ${stateManager.lastNodeId.get()}</li>
+                    <li>Current: ${stateManager.currentNodeId.get()}</li>
+                    <li>Parent: ${stateManager.parentNodeId.get()}</li>
+                    <li>Children:</li>
+                    ${childNodeString}
+                </ul>
+            `;
+        }
     });
 }
