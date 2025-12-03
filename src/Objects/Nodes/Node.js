@@ -16,7 +16,12 @@ export class Node {
         // * Interaction:
         this.element;
         this.position = { x: x, y: y };
+
         this.size = { width: 25, height: 25 };
+
+        // TODO: Think of something better:
+        if(nodeType === NodeType.NODE) this.size = { width: 20, height: 20 };
+        
         this.mouseOffset = { x: 0, y: 0 };
         this.isDragging = false;
         this.isFixed = false;
@@ -33,8 +38,12 @@ export class Node {
         this.wires = [];
         this.rewireTrigger = state();
 
+        //CSS:
+        this.borderWidth = 2;
+
         // TODO: Remove:
         this.color;
+        this.wasJerked = false;
 
         this.createElement();
         this.registerEvents();
@@ -53,6 +62,15 @@ export class Node {
             <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${numId}</div>
         `;
         this.world.appendChild(this.element);
+
+        this.move();
+    }
+
+    move() {
+        this.element.style.left = `${this.position.x}px`;
+        this.element.style.top = `${this.position.y}px`;
+
+        this.rewireTrigger.signal();
     }
 
     //Events:
@@ -132,10 +150,7 @@ export class Node {
             y: e.clientY - this.mouseOffset.y 
         };
 
-        this.element.style.left = `${this.position.x}px`;
-        this.element.style.top = `${this.position.y}px`;
-
-        this.rewireTrigger.signal();
+        this.move();
     }
 
     onMouseUp(e) {

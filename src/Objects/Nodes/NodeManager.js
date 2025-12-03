@@ -92,7 +92,7 @@ export class NodeManager {
 
         this.addChildNode(node);
         // TODO: Find a better solution:
-        this.jerkParents(node);
+        //this.jerkParents(node);
 
         stateManager.currentNodeId.set(id);
         stateManager.parentNodeId.set(node.parentNodeId);
@@ -113,15 +113,11 @@ export class NodeManager {
     jerkNode(node) {
         const dx = node.position.x - node.size.width / 2;
         const dy = node.position.y - node.size.height / 2;
-        const dx1 = dx + 10;
-        const dy1 = dy + 10;
+        const dx1 = dx + Math.random();
+        const dy1 = dy + Math.random();
 
         node.element.style.left = `${dx1}px`;
         node.element.style.top = `${dy1}px`;
-        node.rewireTrigger.signal();
-
-        node.element.style.left = `${dx}px`;
-        node.element.style.top = `${dy}px`;
         node.rewireTrigger.signal();
     }
 
