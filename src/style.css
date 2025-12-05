@@ -51,7 +51,6 @@
     user-select: none;
 
     position: absolute;
-    border: solid 2px;
     border-radius: 50%;
     background: white;
 }

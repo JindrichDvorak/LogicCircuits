@@ -39,7 +39,8 @@ export class Node {
         this.rewireTrigger = state();
 
         //CSS:
-        this.borderWidth = 2;
+        this.borderWidth = 0;
+        if(nodeType === NodeType.NODE) this.borderWidth = 0;
 
         // TODO: Remove:
         this.color;
@@ -54,8 +55,9 @@ export class Node {
         this.element.classList.add("node");
         this.element.style.width = `${this.size.width}px`;
         this.element.style.height = `${this.size.height}px`;
-        this.element.style.left = `${this.position.x - this.size.width / 2}px`;
-        this.element.style.top = `${this.position.y - this.size.height / 2}px`;
+        this.element.style.left = `${this.position.x}px`;
+        this.element.style.top = `${this.position.y}px`;
+        this.element.style.border = `solid ${this.borderWidth}px`;
 
         const numId = this.id.split("-", 2)[1];
         this.element.innerHTML = `
@@ -69,6 +71,8 @@ export class Node {
     move() {
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
+
+        //this.element.style.transform = "translate(-50%, -50%)";
 
         this.rewireTrigger.signal();
     }

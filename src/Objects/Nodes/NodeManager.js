@@ -14,6 +14,10 @@ export class NodeManager {
         this.inputCounter = 0;
         this.nodeCounter = 0;
         this.outputCounter = 0;
+
+        // TODO: Implement into node:
+        this.nodeWidth = 20;
+        this.nodeHeight = 20;
     }
 
     getNodeById(nodeId) {
@@ -75,13 +79,14 @@ export class NodeManager {
                 break;
             }
         }
+        node.element.style.background = node.color;
 
         this.inputCounter++;
     }
 
     createNode(x, y) {
         const id = `${NodeType.NODE}-${this.nodeCounter}`;
-        const node = new Node(this.world, x, y, id, NodeType.NODE);
+        const node = new Node(this.world, x - this.nodeWidth / 2, y - this.nodeHeight / 2, id, NodeType.NODE);
         this.nodes.push(node);
 
         const inputId = stateManager.inputNodeId.get();

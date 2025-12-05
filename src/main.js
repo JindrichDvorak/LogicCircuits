@@ -7,7 +7,7 @@ const app = new Application();
 
 const newInput = document.getElementById("newInput");
 newInput.addEventListener("click", () => {
-  const coords = app.camera.screenToWorldCoords(500, 300);
+  const coords = app.camera.screenToWorldCoords(30, 100);
   app.nodeManager.createInputNode(coords.x, coords.y);
 });
 
