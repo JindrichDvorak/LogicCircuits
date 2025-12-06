@@ -55,6 +55,10 @@
     background: white;
 }
 
+.node:hover {
+    border: solid 1px black;
+}
+
 @property --n-angle {
     syntax: "<angle>";
     initial-value: 0deg;

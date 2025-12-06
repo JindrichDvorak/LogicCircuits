@@ -17,12 +17,11 @@ export class Node {
         this.element;
         this.position = { x: x, y: y };
 
-        this.size = { width: 25, height: 25 };
+        this.size = { width: 20, height: 20 };
 
         // TODO: Think of something better:
-        if(nodeType === NodeType.NODE) this.size = { width: 20, height: 20 };
-        
-        //this.mouseOffset = { x: 0, y: 0 };
+        if(nodeType === NodeType.NODE) this.size = { width: 10, height: 10 };
+
         this.isDragging = false;
         this.lastMousePosition = { x: 0, y: 0 };
         this.isFixed = false;
@@ -59,12 +58,14 @@ export class Node {
         this.element.style.height = `${this.size.height}px`;
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
-        this.element.style.border = `solid ${this.borderWidth}px`;
+        //this.element.style.border = `solid ${this.borderWidth}px`;
 
         const numId = this.id.split("-", 2)[1];
         this.element.innerHTML = `
             <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${numId}</div>
         `;
+        if(this.nodeType === NodeType.NODE) this.element.innerHTML = ``;
+
         this.world.appendChild(this.element);
 
         this.move();

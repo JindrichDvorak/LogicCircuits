@@ -15,9 +15,19 @@ export class NodeManager {
         this.nodeCounter = 0;
         this.outputCounter = 0;
 
+        this.wireHolder = document.createElement("div");
+        this.wireHolder.style.width = "1px";
+        this.wireHolder.style.height = "1px";
+        this.wireHolder.style.position = "absolute";
+        this.world.appendChild(this.wireHolder);
+
         // TODO: Implement into node:
-        this.nodeWidth = 20;
-        this.nodeHeight = 20;
+        this.inputNodeWidth = 20;
+        this.inputNodeHeight = 20;
+        this.nodeWidth = 10;
+        this.nodeHeight = 10;
+        this.outputNodeWidth = 20;
+        this.outputNodeHeight = 20;
     }
 
     getNodeById(nodeId) {
@@ -57,13 +67,13 @@ export class NodeManager {
         const parentNode = this.getNodeById(childNode.parentNodeId);
         parentNode.childNodeIds.push(childNode.id);
 
-        const wire = new Wire(parentNode, childNode);
+        const wire = new Wire(parentNode, childNode, this.wireHolder);
         childNode.wires.push(wire);
     }
 
     createInputNode(x, y, mouseX, mouseY) {
         const id = `${NodeType.INPUT}-${this.inputCounter}`;
-        const node = new Node(this.world, x - this.nodeWidth / 2, y - this.nodeHeight / 2, id, NodeType.INPUT);
+        const node = new Node(this.world, x - this.inputNodeWidth / 2, y - this.inputNodeHeight / 2, id, NodeType.INPUT);
         this.inputNodes.push(node);
 
         // TODO: Remove:
@@ -119,7 +129,7 @@ export class NodeManager {
 
     createOuputNode(x, y, mouseX, mouseY) {
         const id = `${NodeType.OUTPUT}-${this.outputCounter}`;
-        const node = new Node(this.world, x - this.nodeWidth / 2, y - this.nodeHeight / 2, id, NodeType.OUTPUT);
+        const node = new Node(this.world, x - this.outputNodeWidth / 2, y - this.outputNodeHeight / 2, id, NodeType.OUTPUT);
         this.outputNodes.push(node);
         this.outputCounter++;
 

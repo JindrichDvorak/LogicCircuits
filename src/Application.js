@@ -8,7 +8,7 @@ export class Application {
         this.world = document.getElementById("world");
         this.scene = document.getElementById("scene");
 
-        this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
+        this.camera = new Camera(this.world, this.scene, 0, 0, 1);
         this.nodeManager = new NodeManager(this.world);
 
         this.registerEvents();
@@ -33,7 +33,7 @@ export class Application {
             } else if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
                 stateManager.lastNodeId.set(stateManager.currentNodeId.get());
 
-                const coords = { x: e.offsetX, y: e.offsetY };
+                const coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
                 this.nodeManager.createNode(coords.x, coords.y);
                 stateManager.interactionTrigger.signal();
             }

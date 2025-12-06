@@ -21,4 +21,4 @@ newOutput.addEventListener("click", (e) => {
   app.nodeManager.createOuputNode(coords.x, coords.y, mouseX, mouseY);
 });
 
-debugUILogic();
+//debugUILogic();

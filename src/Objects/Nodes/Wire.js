@@ -1,12 +1,18 @@
 export class Wire {
-    constructor(startNode, endNode) {
+    constructor(startNode, endNode, wireHolder) {
         this.startNode = startNode;
         this.endNode = endNode;
+        this.wireHolder = wireHolder;
 
         this.element;
 
         this.wireColor = "black";
         this.wireWidth = 2;
+
+        // ? DEBUG:
+        this.showBoundngBox = false;
+        this.borderWidth = 0.75;
+        this.borderColor = "red";
 
         this.unsubStart;
         this.unsubEnd;
@@ -17,9 +23,12 @@ export class Wire {
     createElement() {
         this.element = document.createElement("div");
         this.element.style.position = "absolute";
-        this.element.style.zIndex = "-1";
+        this.element.style.zIndex = "-2";
+        this.element.style.display = "block";
+        if(this.showBoundngBox) 
+            this.element.style.border = `solid ${this.borderWidth}px ${this.borderColor}`;
 
-        this.startNode.element.appendChild(this.element);
+        this.wireHolder.appendChild(this.element);
 
         this.unsubStart = this.startNode.rewireTrigger.subscribe(() => {
             this.drawWire();
@@ -29,10 +38,6 @@ export class Wire {
         });
 
         this.drawWire();
-
-        this.element.addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-        });
     }
 
     drawWire() {
@@ -60,8 +65,8 @@ export class Wire {
             width += endNodeWidth;
             height += endNodeHeight;
 
-            this.element.style.left = `${-this.wireWidth}px`;
-            this.element.style.top = `${-this.wireWidth}px`;
+            this.element.style.left = `${x0 - this.borderWidth}px`;
+            this.element.style.top = `${y0 - this.borderWidth}px`;
             this.element.style.width = `${width}px`;
             this.element.style.height = `${height}px`;
 
@@ -73,8 +78,8 @@ export class Wire {
             width += startNodeWidth;
             height += endNodeHeight;
 
-            this.element.style.left = `${-width + startNodeWidth - this.wireWidth}px`;
-            this.element.style.top = `${-this.wireWidth}px`;
+            this.element.style.left = `${x0 - width + startNodeWidth - this.borderWidth}px`;
+            this.element.style.top = `${y0 - this.borderWidth}px`;
             this.element.style.width = `${width}px`;
             this.element.style.height = `${height}px`;
 
@@ -86,8 +91,8 @@ export class Wire {
             width += endNodeWidth;
             height += startNodeHeight;
 
-            this.element.style.left = `${-this.wireWidth}px`;
-            this.element.style.top = `${-height + startNodeHeight - this.wireWidth}px`;
+            this.element.style.left = `${x0 - this.borderWidth}px`;
+            this.element.style.top = `${y0 - height + startNodeHeight - this.borderWidth}px`;
             this.element.style.width = `${width}px`;
             this.element.style.height = `${height}px`;
 
@@ -99,8 +104,8 @@ export class Wire {
             width += startNodeWidth;
             height += startNodeHeight;
 
-            this.element.style.left = `${-width + startNodeWidth - this.wireWidth}px`;
-            this.element.style.top = `${-height + startNodeHeight - this.wireWidth}px`;
+            this.element.style.left = `${x0 - width + startNodeWidth - this.borderWidth}px`;
+            this.element.style.top = `${y0 - height + startNodeHeight - this.borderWidth}px`;
             this.element.style.width = `${width}px`;
             this.element.style.height = `${height}px`;
 
@@ -111,12 +116,12 @@ export class Wire {
         }
 
         this.element.innerHTML = `
-            <svg width="100%" height="100%">
+            <svg width="100%" height="100%" style="display:block;">
                 <line 
                     stroke="${this.wireColor}" stroke-width="${this.wireWidth}" 
                     x1="${startX}" y1="${startY}" 
                     x2="${endX}" y2="${endY}"
-                ></line>
+                />
             </svg>
         `;
     }
