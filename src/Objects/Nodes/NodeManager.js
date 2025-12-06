@@ -1,4 +1,4 @@
-import { stateManager } from "../../State/StateManager";
+import { stateManager, Elements, InteractionMode } from "../../State/StateManager";
 import { Node, NodeType } from "./Node";
 import { Wire } from "./Wire";
 
@@ -61,9 +61,9 @@ export class NodeManager {
         childNode.wires.push(wire);
     }
 
-    createInputNode(x, y) {
+    createInputNode(x, y, mouseX, mouseY) {
         const id = `${NodeType.INPUT}-${this.inputCounter}`;
-        const node = new Node(this.world, x, y, id, NodeType.INPUT);
+        const node = new Node(this.world, x - this.nodeWidth / 2, y - this.nodeHeight / 2, id, NodeType.INPUT);
         this.inputNodes.push(node);
 
         // TODO: Remove:
@@ -82,6 +82,17 @@ export class NodeManager {
         node.element.style.background = node.color;
 
         this.inputCounter++;
+
+        stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
+
+        stateManager.interactedElementType.set(Elements.NODE);
+        stateManager.interactedElementSubtype.set(node.nodeType);
+        stateManager.interactedElementId.set(node.id);
+
+        stateManager.interactionTrigger.signal();
+
+        node.lastMousePosition = { x: mouseX, y: mouseY };
+        node.isDragging = true;
     }
 
     createNode(x, y) {
@@ -96,8 +107,6 @@ export class NodeManager {
         node.element.style.background = `${inputNode.color}`;
 
         this.addChildNode(node);
-        // TODO: Find a better solution:
-        //this.jerkParents(node);
 
         stateManager.currentNodeId.set(id);
         stateManager.parentNodeId.set(node.parentNodeId);
@@ -108,30 +117,22 @@ export class NodeManager {
         this.nodeCounter++;
     }
 
-    createOuputNode(x, y) {
+    createOuputNode(x, y, mouseX, mouseY) {
         const id = `${NodeType.OUTPUT}-${this.outputCounter}`;
-        const node = new Node(this.world, x, y, id, NodeType.OUTPUT);
+        const node = new Node(this.world, x - this.nodeWidth / 2, y - this.nodeHeight / 2, id, NodeType.OUTPUT);
         this.outputNodes.push(node);
         this.outputCounter++;
-    }
 
-    jerkNode(node) {
-        const dx = node.position.x - node.size.width / 2;
-        const dy = node.position.y - node.size.height / 2;
-        const dx1 = dx + Math.random();
-        const dy1 = dy + Math.random();
+        stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
 
-        node.element.style.left = `${dx1}px`;
-        node.element.style.top = `${dy1}px`;
-        node.rewireTrigger.signal();
-    }
+        stateManager.interactedElementType.set(Elements.NODE);
+        stateManager.interactedElementSubtype.set(node.nodeType);
+        stateManager.interactedElementId.set(node.id);
 
-    jerkParents(node) {
-        this.jerkNode(node);
-        const parentId = node.parentNodeId;
-        const parentNode = this.getNodeById(parentId);
-        if(parentNode.nodeType === NodeType.INPUT) this.jerkNode(parentNode);
-        else this.jerkParents(parentNode);
+        stateManager.interactionTrigger.signal();
+
+        node.lastMousePosition = { x: mouseX, y: mouseY };
+        node.isDragging = true;
     }
 
     deleteNode(node) {

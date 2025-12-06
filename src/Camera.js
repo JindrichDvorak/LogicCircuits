@@ -1,11 +1,15 @@
 export class Camera {
-    constructor(world, x, y, zoom) {
+    constructor(world, scene, x, y, zoom) {
         this.world = world;
+        this.scene = scene;
         this.position = { x: x, y: y };
 
         this.isDragging = false;
         this.lastMousePosition = { x: 0, y: 0 };
         this.zoom = zoom;
+
+        const sceneRect = this.scene.getBoundingClientRect();
+        this.scenePosition = { x: sceneRect.left, y: sceneRect.top };
 
         this.registerEvents();
         this.transformWorld();
@@ -15,15 +19,23 @@ export class Camera {
         this.world.style.transform = `translate(${-this.position.x}px, ${-this.position.y}px) scale(${this.zoom})`;
     }
 
-    screenToWorldCoords(x, y) {
+    screenToSceneCoords(x, y) {
+        return {
+            x: x - this.scenePosition.x,
+            y: y - this.scenePosition.y
+        };
+    }
+
+    sceneToWorldCoords(x, y) {
         return {
             x: (x + this.position.x) / this.zoom,
             y: (y + this.position.y) / this.zoom
         };
     }
 
-    getWorldCoords() {
-        return this.screenToWorldCoords(0, 0);
+    screenToWorldCoords(x, y) {
+        const sceneCoords = this.screenToSceneCoords(x, y);
+        return this.sceneToWorldCoords(sceneCoords.x, sceneCoords.y);
     }
 
     registerEvents() {

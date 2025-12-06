@@ -9,13 +9,14 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
 
-  <body style="position: relative; height: 90vh; min-height: 600px;">
+  <body id="body" style="position: relative; height: 90vh; min-height: 600px;">
     <div id="header" style="height: 25px; border: solid 1px; text-align: center;">
       Head
     </div>
     <div style="display: flex; flex-direction: row; height: 95%;">
       <div id="controls" style="width: 10%; border: solid 1px;">
         <button id="newInput" style="width: 100%;">New input</button>
+        <button id="newOutput" style="width: 100%;">New output</button>
       </div>
       <!-- * Camera and rendering -->
       <div id="scene" style="position: relative; flex-grow: 1; overflow: hidden; 

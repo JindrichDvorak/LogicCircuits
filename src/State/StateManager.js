@@ -5,6 +5,7 @@ export const InteractionMode = Object.freeze({
     NORMAL: "Normal",
     DRAGGING: "Dragging",
     CONNECTING: "Connecting",
+    CREATING_NODE: "Creating node"
 });
 
 export const Elements = Object.freeze({
@@ -20,7 +21,6 @@ class StateManager {
         this.interactedElementType = state(Elements.WORLD);
         this.interactedElementSubtype = state("Undefined");
         this.interactedElementId = state("Undefined");
-        this.interactionTrigger = state();
 
         this.inputNodeId = state(-1);
         this.connectingNodeId = state(-1);
@@ -28,6 +28,9 @@ class StateManager {
         this.currentNodeId = state(-1);
         this.parentNodeId = state(-1);
         this.childNodeIds = state([]);
+
+        // * Triggers:
+        this.interactionTrigger = state();
     }
 
     setDefaultState() {

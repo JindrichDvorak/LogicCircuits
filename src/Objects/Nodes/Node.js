@@ -22,8 +22,9 @@ export class Node {
         // TODO: Think of something better:
         if(nodeType === NodeType.NODE) this.size = { width: 20, height: 20 };
         
-        this.mouseOffset = { x: 0, y: 0 };
+        //this.mouseOffset = { x: 0, y: 0 };
         this.isDragging = false;
+        this.lastMousePosition = { x: 0, y: 0 };
         this.isFixed = false;
         this.holdTime = 500;
         this.holdTimer;
@@ -33,6 +34,7 @@ export class Node {
         this.inputNodeId = -1;
         this.parentNodeId = -1;
         this.childNodeIds = [];
+        this.outputNodeIds = [];
 
         // * Wiring:
         this.wires = [];
@@ -72,8 +74,6 @@ export class Node {
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
 
-        //this.element.style.transform = "translate(-50%, -50%)";
-
         this.rewireTrigger.signal();
     }
 
@@ -110,11 +110,8 @@ export class Node {
                 this.isDragging = true;
             }, this.holdTime);
 
-            this.mouseOffset = { 
-                x: e.clientX - this.element.offsetLeft, 
-                y: e.clientY - this.element.offsetTop 
-            };            
-            e.stopPropagation();
+            this.lastMousePosition = { x: e.clientX, y: e.clientY };          
+            //e.stopPropagation();
         } else if(e.button === 2) {
             // * State -----------------------------------------------
             stateManager.interactionMode.set(InteractionMode.CONNECTING);
@@ -149,10 +146,12 @@ export class Node {
         if(this.isFixed) return;
         if(!this.isDragging) return;
 
-        this.position = { 
-            x: e.clientX - this.mouseOffset.x, 
-            y: e.clientY - this.mouseOffset.y 
-        };
+        const dx = e.clientX - this.lastMousePosition.x;
+        const dy = e.clientY - this.lastMousePosition.y;
+
+        this.position.x += dx;
+        this.position.y += dy;
+        this.lastMousePosition = { x: e.clientX, y: e.clientY };
 
         this.move();
     }
