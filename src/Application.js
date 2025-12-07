@@ -2,6 +2,7 @@ import { stateManager, InteractionMode } from "./State/StateManager";
 
 import { Camera } from "./Camera";
 import { NodeManager } from "./Objects/Nodes/NodeManager";
+import { NodeType } from "./Objects/Nodes/Node";
 
 export class Application {
     constructor() {
@@ -31,6 +32,7 @@ export class Application {
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
                 stateManager.interactionTrigger.signal();
             } else if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
+                console.log(`Clicked on World`);
                 stateManager.lastNodeId.set(stateManager.currentNodeId.get());
 
                 const coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
@@ -48,7 +50,8 @@ export class Application {
             const nodeId = stateManager.currentNodeId.get();
             const node = this.nodeManager.getNodeById(nodeId);
             if(!node) return;
-            this.nodeManager.deleteNodeChain(node);
+            if(node.nodeType === NodeType.OUTPUT) this.nodeManager.deleteOutputNode(node);
+            else this.nodeManager.deleteNodeChain(node);
         }
     }
 }

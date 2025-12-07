@@ -2,6 +2,17 @@ import { Elements, InteractionMode, stateManager } from "../../State/StateManage
 import { state } from "../../State/state";
 
 
+/* TODO:
+    * Disable connection for already connected output nodes.
+    * Fix node jerk on hover (border).
+    * Add input and output node text labels.
+        * Remove numbering inside input and output nodes.
+        * Add input and output node grouping (multiple nodes with one label).
+            ? Add sublabeling within node groups.
+    ! Add "input logic state" -- 0, or 1.
+        ! Add logic state propagation (input -> wires -> output).
+        ? Add an optional time delay for logic state propagation through wires.
+*/
 export const NodeType = Object.freeze({
     INPUT: "input",
     NODE: "node",
@@ -43,10 +54,6 @@ export class Node {
         this.borderWidth = 0;
         if(nodeType === NodeType.NODE) this.borderWidth = 0;
 
-        // TODO: Remove:
-        this.color;
-        this.wasJerked = false;
-
         this.createElement();
         this.registerEvents();
     }
@@ -64,7 +71,10 @@ export class Node {
         this.element.innerHTML = `
             <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${numId}</div>
         `;
-        if(this.nodeType === NodeType.NODE) this.element.innerHTML = ``;
+        if(this.nodeType === NodeType.NODE) {
+            this.element.innerHTML = ``;
+            this.element.style.background = "black";
+        }
 
         this.world.appendChild(this.element);
 
@@ -91,31 +101,44 @@ export class Node {
 
     onMouseDown(e) {
         if(e.button === 0) {
-            // * State -----------------------------------------------
-            stateManager.interactionMode.set(InteractionMode.NORMAL);
-            stateManager.interactedElementType.set(Elements.NODE);
-            stateManager.interactedElementSubtype.set(this.nodeType);
-            stateManager.interactedElementId.set(this.id);
+            if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
+                if(this.nodeType === NodeType.OUTPUT) {
+                    stateManager.outputNodeId.set(this.id);
 
-            stateManager.interactionTrigger.signal();
-            // * -----------------------------------------------------
-            
-            this.element.classList.add("animate");
+                    stateManager.connectOutputTrigger.signal();
 
-            this.holdTimer = setTimeout(() => {
+                    stateManager.interactionMode.set(InteractionMode.NORMAL);
+                    stateManager.interactionTrigger.signal();
+                    e.stopPropagation();
+                }
+            } else {
                 // * State -----------------------------------------------
-                stateManager.interactionMode.set(InteractionMode.DRAGGING);
+                stateManager.interactionMode.set(InteractionMode.NORMAL);
+                stateManager.interactedElementType.set(Elements.NODE);
+                stateManager.interactedElementSubtype.set(this.nodeType);
+                stateManager.interactedElementId.set(this.id);
+
                 stateManager.interactionTrigger.signal();
                 // * -----------------------------------------------------
+                
+                this.element.classList.add("animate");
 
-                this.isDragging = true;
-            }, this.holdTime);
+                this.holdTimer = setTimeout(() => {
+                    // * State -----------------------------------------------
+                    stateManager.interactionMode.set(InteractionMode.DRAGGING);
+                    stateManager.interactionTrigger.signal();
+                    // * -----------------------------------------------------
 
-            this.lastMousePosition = { x: e.clientX, y: e.clientY };          
+                    this.isDragging = true;
+                }, this.holdTime);
+
+                this.lastMousePosition = { x: e.clientX, y: e.clientY };
+            }
+
             //e.stopPropagation();
         } else if(e.button === 2) {
             // * State -----------------------------------------------
-            stateManager.interactionMode.set(InteractionMode.CONNECTING);
+            if(this.nodeType !== NodeType.OUTPUT) stateManager.interactionMode.set(InteractionMode.CONNECTING);
             stateManager.interactedElementType.set(Elements.NODE);
             stateManager.interactedElementSubtype.set(this.nodeType);
             stateManager.interactedElementId.set(this.id);

@@ -28,8 +28,13 @@ class StateManager {
         this.currentNodeId = state(-1);
         this.parentNodeId = state(-1);
         this.childNodeIds = state([]);
+        this.outputNodeId = state(-1);
 
         // * Triggers:
+        // *    Logic triggers:
+        this.connectOutputTrigger = state();
+
+        // *    UI triggers:
         this.interactionTrigger = state();
     }
 
@@ -46,6 +51,7 @@ class StateManager {
         this.currentNodeId = state(-1);
         this.parentNodeId = state(-1);
         this.childNodeIds = state([]);
+        this.outputNodeId = state(-1);
 
         this.interactionTrigger.signal();
     }

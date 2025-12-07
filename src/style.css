@@ -56,7 +56,7 @@
 }
 
 .node:hover {
-    border: solid 1px black;
+    border: solid 2px gold;
 }
 
 @property --n-angle {

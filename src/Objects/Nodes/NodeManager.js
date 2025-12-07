@@ -28,6 +28,8 @@ export class NodeManager {
         this.nodeHeight = 10;
         this.outputNodeWidth = 20;
         this.outputNodeHeight = 20;
+
+        stateManager.connectOutputTrigger.subscribe(() => this.connectOutputNode());
     }
 
     getNodeById(nodeId) {
@@ -76,21 +78,6 @@ export class NodeManager {
         const node = new Node(this.world, x - this.inputNodeWidth / 2, y - this.inputNodeHeight / 2, id, NodeType.INPUT);
         this.inputNodes.push(node);
 
-        // TODO: Remove:
-        switch(this.inputCounter) {
-            case 0: {
-                node.color = "peachpuff";
-                break;
-            } case 1: {
-                node.color = "palegreen";
-                break;
-            } case 2: {
-                node.color = "powderblue";
-                break;
-            }
-        }
-        node.element.style.background = node.color;
-
         this.inputCounter++;
 
         stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
@@ -114,9 +101,12 @@ export class NodeManager {
         const inputNode = this.getNodeById(inputId);
         node.inputNodeId = inputId;
         node.parentNodeId = stateManager.lastNodeId.get();
-        node.element.style.background = `${inputNode.color}`;
 
-        this.addChildNode(node);
+        const parentNode = this.getNodeById(node.parentNodeId);
+        parentNode.childNodeIds.push(node.id);
+
+        const wire = new Wire(parentNode, node, this.wireHolder);
+        node.wires.push(wire);
 
         stateManager.currentNodeId.set(id);
         stateManager.parentNodeId.set(node.parentNodeId);
@@ -145,6 +135,24 @@ export class NodeManager {
         node.isDragging = true;
     }
 
+    connectOutputNode() {
+        const outputNodeId = stateManager.outputNodeId.get();
+        const outputNode = this.getNodeById(outputNodeId);
+        const node = this.getNodeById(stateManager.currentNodeId.get());
+
+        node.childNodeIds.push(outputNodeId);
+        const wire = new Wire(outputNode, node, this.wireHolder);
+        outputNode.wires.push(wire);
+        outputNode.childNodeIds.push(node.id);
+
+        outputNode.inputNodeId = node.inputNodeId;
+
+        if(node.nodeType !== NodeType.INPUT) {
+            const inputNode = this.getNodeById(node.inputNodeId);
+            inputNode.outputNodeIds.push(outputNodeId);
+        }
+    }
+
     deleteNode(node) {
         node.wires.forEach((wire) => {
             wire.unsubStart();
@@ -170,11 +178,44 @@ export class NodeManager {
         }
     }
 
+    deleteOutputNode(outputNode) {
+        if(outputNode.wires.length > 0) {
+            const wire = outputNode.wires[0];
+            wire.unsubStart();
+            wire.unsubEnd();
+            wire.element.remove();
+            outputNode.wires = [];
+        }
+
+        if(outputNode.childNodeIds.length > 0) {
+            const node = this.getNodeById(outputNode.childNodeIds[0]);
+            node.childNodeIds.splice(node.childNodeIds.indexOf(outputNode.id), 1);
+        }
+
+        if(outputNode.inputNodeId !== -1) {
+            const inputNode = this.getNodeById(outputNode.inputNodeId);
+            inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNode.id), 1);
+        }
+
+        this.deleteNode(outputNode);
+    }
+
     deleteChildren(node) {
         node.childNodeIds.forEach((childId) => {
             const childNode = this.getNodeById(childId);
-            this.deleteChildren(childNode);
-            this.deleteNode(childNode);
+            if(childNode.nodeType !== NodeType.OUTPUT) {
+                this.deleteChildren(childNode);
+                this.deleteNode(childNode);
+            } else {
+                childNode.childNodeIds = [];
+                childNode.element.style.background = "white";
+                
+                const wire = childNode.wires[0];
+                wire.unsubStart();
+                wire.unsubEnd();
+                wire.element.remove();
+                childNode.wires = [];
+            }
         });
         node.childNodeIds = [];
     }

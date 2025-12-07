@@ -15,16 +15,7 @@ export function debugUILogic() {
     `;
 
     const unsubscribe = stateManager.interactionTrigger.subscribe(() => {
-        debugUI.innerHTML = `
-            <div>Interaction:</div>
-            <ul>
-                <li>Mode: ${stateManager.interactionMode.get()}</li>
-                <li>Element type: ${stateManager.interactedElementType.get()} 
-                    (${stateManager.interactedElementId.get()})</li>
-            </ul>
-        `;
-        if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
-            let childNodeString = "<ul>";
+        let childNodeString = "<ul>";
             stateManager.childNodeIds.get().forEach((childId) => {
                 childNodeString += `<li>${childId}</li>`;
             });
@@ -48,6 +39,5 @@ export function debugUILogic() {
                     ${childNodeString}
                 </ul>
             `;
-        }
     });
 }
