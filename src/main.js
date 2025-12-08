@@ -21,4 +21,11 @@ newOutput.addEventListener("click", (e) => {
   app.nodeManager.createOuputNode(coords.x, coords.y, mouseX, mouseY);
 });
 
+const newCompoment = document.getElementById("newComponent");
+newCompoment.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
+});
+
 debugUILogic();

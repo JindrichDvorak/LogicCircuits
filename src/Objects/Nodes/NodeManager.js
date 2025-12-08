@@ -65,14 +65,6 @@ export class NodeManager {
         return desirredNode;
     }
 
-    addChildNode(childNode) {
-        const parentNode = this.getNodeById(childNode.parentNodeId);
-        parentNode.childNodeIds.push(childNode.id);
-
-        const wire = new Wire(parentNode, childNode, this.wireHolder);
-        childNode.wires.push(wire);
-    }
-
     createInputNode(x, y, mouseX, mouseY) {
         const id = `${NodeType.INPUT}-${this.inputCounter}`;
         const node = new Node(this.world, x - this.inputNodeWidth / 2, y - this.inputNodeHeight / 2, id, NodeType.INPUT);
@@ -107,6 +99,8 @@ export class NodeManager {
 
         const wire = new Wire(parentNode, node, this.wireHolder);
         node.wires.push(wire);
+
+        node.connectLogicStates(parentNode.logicState);
 
         stateManager.currentNodeId.set(id);
         stateManager.parentNodeId.set(node.parentNodeId);
@@ -144,6 +138,8 @@ export class NodeManager {
         const wire = new Wire(outputNode, node, this.wireHolder);
         outputNode.wires.push(wire);
         outputNode.childNodeIds.push(node.id);
+
+        outputNode.connectLogicStates(node.logicState);
 
         outputNode.inputNodeId = node.inputNodeId;
 

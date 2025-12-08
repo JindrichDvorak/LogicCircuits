@@ -1,16 +1,16 @@
 import { Elements, InteractionMode, stateManager } from "../../State/StateManager";
 import { state } from "../../State/state";
+import { stateNeg } from "../../logic";
 
 
 /* TODO:
-    * Disable connection for already connected output nodes.
-    * Fix node jerk on hover (border).
+    * Fix node jerk on hover (border). 
     * Add input and output node text labels.
         * Remove numbering inside input and output nodes.
         * Add input and output node grouping (multiple nodes with one label).
             ? Add sublabeling within node groups.
-    ! Add "input logic state" -- 0, or 1.
-        ! Add logic state propagation (input -> wires -> output).
+    ! Add "input logic state" -- 0, or 1.                                           !DONE!
+        ! Add logic state propagation (input -> wires -> output).                   !DONE!
         ? Add an optional time delay for logic state propagation through wires.
 */
 export const NodeType = Object.freeze({
@@ -38,13 +38,17 @@ export class Node {
         this.isFixed = false;
         this.holdTime = 500;
         this.holdTimer;
+        this.mouseLeave = false;
 
-        // * Node logic:
+        // * Node connection logic:
         this.nodeType = nodeType;
         this.inputNodeId = -1;
         this.parentNodeId = -1;
         this.childNodeIds = [];
         this.outputNodeIds = [];
+
+        // * Node logic state:
+        this.logicState = state(0);
 
         // * Wiring:
         this.wires = [];
@@ -79,6 +83,8 @@ export class Node {
         this.world.appendChild(this.element);
 
         this.move();
+
+        this.logicState.subscribe(() => this.onLogicStateChange());
     }
 
     move() {
@@ -86,6 +92,32 @@ export class Node {
         this.element.style.top = `${this.position.y}px`;
 
         this.rewireTrigger.signal();
+    }
+
+    onLogicStateChange() {
+        if(this.logicState.get() === 0) {
+            if(this.nodeType === NodeType.INPUT || this.nodeType === NodeType.OUTPUT) {
+                this.element.style.background = "white";
+            } else {
+                this.element.style.background = "black";
+            }
+            this.wires.forEach((wire) => {
+                wire.wireColor = "black";
+                wire.drawWire();
+            });
+        } else {
+            this.element.style.background = "red";
+            this.wires.forEach((wire) => {
+                wire.wireColor = "red";
+                wire.drawWire();
+            });
+        }
+    }
+
+    connectLogicStates(parentLogicState) {
+        parentLogicState.subscribe(() => {
+            this.logicState.set(parentLogicState.get());
+        })
     }
 
     //Events:
@@ -100,9 +132,10 @@ export class Node {
     }
 
     onMouseDown(e) {
+        this.mouseLeave = false;
         if(e.button === 0) {
             if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
-                if(this.nodeType === NodeType.OUTPUT) {
+                if(this.nodeType === NodeType.OUTPUT && this.inputNodeId === -1) {
                     stateManager.outputNodeId.set(this.id);
 
                     stateManager.connectOutputTrigger.signal();
@@ -134,8 +167,7 @@ export class Node {
 
                 this.lastMousePosition = { x: e.clientX, y: e.clientY };
             }
-
-            //e.stopPropagation();
+            e.stopPropagation();
         } else if(e.button === 2) {
             // * State -----------------------------------------------
             if(this.nodeType !== NodeType.OUTPUT) stateManager.interactionMode.set(InteractionMode.CONNECTING);
@@ -187,6 +219,8 @@ export class Node {
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
                 stateManager.interactionTrigger.signal();
                 // * -----------------------------------------------------
+            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave) {
+                this.logicState.set(stateNeg(this.logicState));
             }
             
             this.element.classList.remove("animate");
@@ -200,5 +234,6 @@ export class Node {
         if(!this.isDragging) {
             this.element.classList.remove("animate");
         }
+        this.mouseLeave = true;
     }
 }

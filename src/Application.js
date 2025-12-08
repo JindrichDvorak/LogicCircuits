@@ -32,7 +32,6 @@ export class Application {
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
                 stateManager.interactionTrigger.signal();
             } else if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
-                console.log(`Clicked on World`);
                 stateManager.lastNodeId.set(stateManager.currentNodeId.get());
 
                 const coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);

@@ -11,7 +11,7 @@
     background-size: 25px 25px;
 }
 
-.logicContainer {
+.component {
     user-select: none;
 
     position: absolute;
@@ -19,13 +19,13 @@
     border: solid 2px;
 }
 
-@property --lC-angle {
+@property --c-angle {
     syntax: "<angle>";
     initial-value: 0deg;
     inherits: false;
 }
 
-.logicContainer.animate::after {
+.component.animate::after {
     content: "";
     position: absolute;
     width: 100%;
@@ -34,16 +34,16 @@
     top: 50%;
     translate: -50% -50%;
     padding: 5px;
-    background-image: conic-gradient(orange var(--lC-angle), transparent 0deg);
+    background-image: conic-gradient(orange var(--c-angle), transparent 0deg);
     animation: 0.5s lC-load linear forwards;
     z-index: -1;
 }
 
-@keyframes lC-load {
+@keyframes c-load {
     from {
-        --lC-angle: 0deg;
+        --c-angle: 0deg;
     } to {
-        --lC-angle: 360deg;
+        --c-angle: 360deg;
     }
 }
 
