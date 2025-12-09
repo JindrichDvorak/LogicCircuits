@@ -1,8 +1,11 @@
-import { stateManager, Elements, InteractionMode } from "../../State/StateManager";
+import { stateManager, InteractionMode, WorldObject } from "../../State/StateManager";
 import { Node, NodeType } from "./Node";
 import { Wire } from "./Wire";
 
-
+/* TODO:
+    * Modify node-user interaction through stateManager --> Use fever state variables.
+    ? Input node deletion: If node doesn't have any children, delete it, otherwise, delete the connected node chain first.
+*/
 export class NodeManager {
     constructor(world) {
         this.world = world;
@@ -21,13 +24,12 @@ export class NodeManager {
         this.wireHolder.style.position = "absolute";
         this.world.appendChild(this.wireHolder);
 
-        // TODO: Implement into node:
-        this.inputNodeWidth = 20;
-        this.inputNodeHeight = 20;
+        this.inputNodeWidth = 15;
+        this.inputNodeHeight = 15;
         this.nodeWidth = 10;
         this.nodeHeight = 10;
-        this.outputNodeWidth = 20;
-        this.outputNodeHeight = 20;
+        this.outputNodeWidth = 15;
+        this.outputNodeHeight = 15;
 
         stateManager.connectOutputTrigger.subscribe(() => this.connectOutputNode());
     }
@@ -65,32 +67,37 @@ export class NodeManager {
         return desirredNode;
     }
 
-    createInputNode(x, y, mouseX, mouseY) {
+    createInputNode(x, y, mouseX, mouseY, isComponentNode) {
         const id = `${NodeType.INPUT}-${this.inputCounter}`;
-        const node = new Node(this.world, x - this.inputNodeWidth / 2, y - this.inputNodeHeight / 2, id, NodeType.INPUT);
+        const node = new Node(this.world, id, NodeType.INPUT, x - this.inputNodeWidth / 2, y - this.inputNodeHeight / 2, 
+            this.inputNodeWidth, this.inputNodeHeight, isComponentNode);
         this.inputNodes.push(node);
-
         this.inputCounter++;
 
-        stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
+        if(!isComponentNode) {
+            stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
+            stateManager.selectedWorldObject.set({
+                id: node.id,
+                type: WorldObject.NODE
+            });
 
-        stateManager.interactedElementType.set(Elements.NODE);
-        stateManager.interactedElementSubtype.set(node.nodeType);
-        stateManager.interactedElementId.set(node.id);
+            node.lastMousePosition = { x: mouseX, y: mouseY };
+            node.isDragging = true;
+        } else {
+            node.isFixed = true;
+            node.relativePosition = { x: x, y: y };
+        }
 
-        stateManager.interactionTrigger.signal();
-
-        node.lastMousePosition = { x: mouseX, y: mouseY };
-        node.isDragging = true;
+        return node;
     }
 
     createNode(x, y) {
         const id = `${NodeType.NODE}-${this.nodeCounter}`;
-        const node = new Node(this.world, x - this.nodeWidth / 2, y - this.nodeHeight / 2, id, NodeType.NODE);
+        const node = new Node(this.world, id, NodeType.NODE, x - this.nodeWidth / 2, y - this.nodeHeight / 2, 
+            this.nodeWidth, this.nodeHeight, false);
         this.nodes.push(node);
 
         const inputId = stateManager.inputNodeId.get();
-        const inputNode = this.getNodeById(inputId);
         node.inputNodeId = inputId;
         node.parentNodeId = stateManager.lastNodeId.get();
 
@@ -101,32 +108,39 @@ export class NodeManager {
         node.wires.push(wire);
 
         node.connectLogicStates(parentNode.logicState);
+        parentNode.logicState.signal();
 
         stateManager.currentNodeId.set(id);
-        stateManager.parentNodeId.set(node.parentNodeId);
-        stateManager.childNodeIds.set(node.childNodeIds);
-
-        stateManager.interactionTrigger.signal();
+        stateManager.selectedWorldObject.set({
+            id: id,
+            type: WorldObject.NODE
+        });
 
         this.nodeCounter++;
     }
 
-    createOuputNode(x, y, mouseX, mouseY) {
+    createOuputNode(x, y, mouseX, mouseY, isComponentNode) {
         const id = `${NodeType.OUTPUT}-${this.outputCounter}`;
-        const node = new Node(this.world, x - this.outputNodeWidth / 2, y - this.outputNodeHeight / 2, id, NodeType.OUTPUT);
+        const node = new Node(this.world, id, NodeType.OUTPUT, x - this.outputNodeWidth / 2, y - this.outputNodeHeight / 2, 
+            this.outputNodeWidth, this.outputNodeHeight, isComponentNode);
         this.outputNodes.push(node);
         this.outputCounter++;
 
-        stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
+        if(!isComponentNode) {
+            stateManager.interactionMode.set(InteractionMode.CREATING_NODE);
+            stateManager.selectedWorldObject.set({
+                id: id,
+                type: WorldObject.NODE
+            });
 
-        stateManager.interactedElementType.set(Elements.NODE);
-        stateManager.interactedElementSubtype.set(node.nodeType);
-        stateManager.interactedElementId.set(node.id);
+            node.lastMousePosition = { x: mouseX, y: mouseY };
+            node.isDragging = true;
+        } else {
+            node.isFixed = true;
+            node.relativePosition = { x: x, y: y };
+        }
 
-        stateManager.interactionTrigger.signal();
-
-        node.lastMousePosition = { x: mouseX, y: mouseY };
-        node.isDragging = true;
+        return node;
     }
 
     connectOutputNode() {
@@ -140,6 +154,7 @@ export class NodeManager {
         outputNode.childNodeIds.push(node.id);
 
         outputNode.connectLogicStates(node.logicState);
+        node.logicState.signal();
 
         outputNode.inputNodeId = node.inputNodeId;
 
@@ -158,6 +173,8 @@ export class NodeManager {
         });
         node.wires = [];
 
+        if(node.unsubFromParentLogicState) node.unsubFromParentLogicState();
+
         node.element.remove();
 
         switch(node.nodeType) {
@@ -175,14 +192,6 @@ export class NodeManager {
     }
 
     deleteOutputNode(outputNode) {
-        if(outputNode.wires.length > 0) {
-            const wire = outputNode.wires[0];
-            wire.unsubStart();
-            wire.unsubEnd();
-            wire.element.remove();
-            outputNode.wires = [];
-        }
-
         if(outputNode.childNodeIds.length > 0) {
             const node = this.getNodeById(outputNode.childNodeIds[0]);
             node.childNodeIds.splice(node.childNodeIds.indexOf(outputNode.id), 1);
@@ -204,13 +213,16 @@ export class NodeManager {
                 this.deleteNode(childNode);
             } else {
                 childNode.childNodeIds = [];
-                childNode.element.style.background = "white";
+                childNode.inputNodeId = -1;
                 
                 const wire = childNode.wires[0];
                 wire.unsubStart();
                 wire.unsubEnd();
                 wire.element.remove();
                 childNode.wires = [];
+
+                childNode.unsubFromParentLogicState();
+                childNode.logicState.set(0);
             }
         });
         node.childNodeIds = [];
@@ -225,5 +237,20 @@ export class NodeManager {
         this.deleteNode(node);
 
         stateManager.setDefaultState();
+    }
+
+    deleteGeneralNode(node) {
+        if(!node) return;
+
+        if(node.nodeType === NodeType.OUTPUT) this.deleteOutputNode(node);
+        else this.deleteNodeChain(node);
+    }
+
+    deleteGeneralNodeById(nodeId) {
+        const node = this.getNodeById(nodeId);
+
+        if(node.isComponentNode) return;
+
+        this.deleteGeneralNode(node);
     }
 }

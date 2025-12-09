@@ -1,4 +1,4 @@
-import { Elements, InteractionMode, stateManager } from "../../State/StateManager";
+import { WorldObject, InteractionMode, stateManager } from "../../State/StateManager";
 import { state } from "../../State/state";
 import { stateNeg } from "../../logic";
 
@@ -12,6 +12,13 @@ import { stateNeg } from "../../logic";
     ! Add "input logic state" -- 0, or 1.                                           !DONE!
         ! Add logic state propagation (input -> wires -> output).                   !DONE!
         ? Add an optional time delay for logic state propagation through wires.
+        ! Unsubscribe from logic state propagation uppon node deletion.             !DONE!
+        ! Connected nodes should immediately set their logic state to parent 
+            ! node value.                                                           !DONE!
+                ? Add an optional setting, that allows logic state propagation 
+                    ? only after the circuit path is complete (input -> output).
+    * Fix state management.
+        * Remove debugUI state.
 */
 export const NodeType = Object.freeze({
     INPUT: "input",
@@ -20,18 +27,14 @@ export const NodeType = Object.freeze({
 });
 
 export class Node {
-    constructor(world, x, y, id, nodeType) {
+    constructor(world, id, nodeType, x, y, width, height, isComponentNode) {
         this.world = world;
         this.id = id;
 
         // * Interaction:
         this.element;
         this.position = { x: x, y: y };
-
-        this.size = { width: 20, height: 20 };
-
-        // TODO: Think of something better:
-        if(nodeType === NodeType.NODE) this.size = { width: 10, height: 10 };
+        this.size = { width: width, height: height };
 
         this.isDragging = false;
         this.lastMousePosition = { x: 0, y: 0 };
@@ -47,16 +50,22 @@ export class Node {
         this.childNodeIds = [];
         this.outputNodeIds = [];
 
-        // * Node logic state:
-        this.logicState = state(0);
-
         // * Wiring:
         this.wires = [];
         this.rewireTrigger = state();
 
-        //CSS:
-        this.borderWidth = 0;
-        if(nodeType === NodeType.NODE) this.borderWidth = 0;
+        // * Node logic state:
+        if(isComponentNode && nodeType === NodeType.INPUT) {
+            this.logicState;
+        } else {
+            this.logicState = state(0);
+            this.logicState.subscribe(() => this.onLogicStateChange());
+        }
+        this.unsubFromParentLogicState;
+
+        // * Component node logic:
+        this.isComponentNode = isComponentNode;
+        this.relativePosition = { x: 0, y: 0 };
 
         this.createElement();
         this.registerEvents();
@@ -69,12 +78,14 @@ export class Node {
         this.element.style.height = `${this.size.height}px`;
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
-        //this.element.style.border = `solid ${this.borderWidth}px`;
 
+        //if(this.nodeType !== NodeType.NODE) this.element.style.border = "solid 2px black";
+
+        /*
         const numId = this.id.split("-", 2)[1];
         this.element.innerHTML = `
             <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${numId}</div>
-        `;
+        `;*/
         if(this.nodeType === NodeType.NODE) {
             this.element.innerHTML = ``;
             this.element.style.background = "black";
@@ -83,8 +94,6 @@ export class Node {
         this.world.appendChild(this.element);
 
         this.move();
-
-        this.logicState.subscribe(() => this.onLogicStateChange());
     }
 
     move() {
@@ -92,6 +101,15 @@ export class Node {
         this.element.style.top = `${this.position.y}px`;
 
         this.rewireTrigger.signal();
+    }
+
+    moveWithComponent(componentPosisiton) {
+        this.position = {
+            x: componentPosisiton.x + this.relativePosition.x - this.size.width / 2,
+            y: componentPosisiton.y + this.relativePosition.y - this.size.height / 2
+        };
+
+        this.move();
     }
 
     onLogicStateChange() {
@@ -115,9 +133,9 @@ export class Node {
     }
 
     connectLogicStates(parentLogicState) {
-        parentLogicState.subscribe(() => {
+        this.unsubFromParentLogicState = parentLogicState.subscribe(() => {
             this.logicState.set(parentLogicState.get());
-        })
+        });
     }
 
     //Events:
@@ -131,6 +149,7 @@ export class Node {
         this.element.addEventListener("contextmenu", (e) => e.preventDefault());
     }
 
+    // TODO: Fix e.stopPropagation():
     onMouseDown(e) {
         this.mouseLeave = false;
         if(e.button === 0) {
@@ -140,40 +159,34 @@ export class Node {
 
                     stateManager.connectOutputTrigger.signal();
 
-                    stateManager.interactionMode.set(InteractionMode.NORMAL);
-                    stateManager.interactionTrigger.signal();
+                    stateManager.setDefaultState();
+
                     e.stopPropagation();
                 }
             } else {
-                // * State -----------------------------------------------
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
-                stateManager.interactedElementType.set(Elements.NODE);
-                stateManager.interactedElementSubtype.set(this.nodeType);
-                stateManager.interactedElementId.set(this.id);
+                stateManager.currentNodeId.set(this.id);
+                stateManager.selectedWorldObject.set({
+                    id: this.id,
+                    type: WorldObject.NODE
+                });
 
-                stateManager.interactionTrigger.signal();
-                // * -----------------------------------------------------
+                if(!this.isFixed) {
+                    this.element.classList.add("animate");
+
+                    this.holdTimer = setTimeout(() => {
+                        stateManager.interactionMode.set(InteractionMode.DRAGGING);
+
+                        this.isDragging = true;
+                    }, this.holdTime);
+
+                    this.lastMousePosition = { x: e.clientX, y: e.clientY };
+                }
                 
-                this.element.classList.add("animate");
-
-                this.holdTimer = setTimeout(() => {
-                    // * State -----------------------------------------------
-                    stateManager.interactionMode.set(InteractionMode.DRAGGING);
-                    stateManager.interactionTrigger.signal();
-                    // * -----------------------------------------------------
-
-                    this.isDragging = true;
-                }, this.holdTime);
-
-                this.lastMousePosition = { x: e.clientX, y: e.clientY };
             }
             e.stopPropagation();
         } else if(e.button === 2) {
-            // * State -----------------------------------------------
             if(this.nodeType !== NodeType.OUTPUT) stateManager.interactionMode.set(InteractionMode.CONNECTING);
-            stateManager.interactedElementType.set(Elements.NODE);
-            stateManager.interactedElementSubtype.set(this.nodeType);
-            stateManager.interactedElementId.set(this.id);
 
             stateManager.connectingNodeId.set(this.id);
             switch(this.nodeType) {
@@ -188,11 +201,10 @@ export class Node {
 
             stateManager.lastNodeId.set(this.id);
             stateManager.currentNodeId.set(this.id);
-            stateManager.parentNodeId.set(this.parentNodeId);
-            stateManager.childNodeIds.set(this.childNodeIds);
-
-            stateManager.interactionTrigger.signal();
-            // * -----------------------------------------------------
+            stateManager.selectedWorldObject.set({
+                id: this.id,
+                type: WorldObject.NODE
+            });
 
             e.stopPropagation();
         }
@@ -215,11 +227,8 @@ export class Node {
     onMouseUp(e) {
         if(e.button === 0) {
             if(this.isDragging) {
-                // * State -----------------------------------------------
-                stateManager.interactionMode.set(InteractionMode.NORMAL);
-                stateManager.interactionTrigger.signal();
-                // * -----------------------------------------------------
-            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave) {
+                stateManager.setDefaultState();
+            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && !this.isComponentNode) {
                 this.logicState.set(stateNeg(this.logicState));
             }
             

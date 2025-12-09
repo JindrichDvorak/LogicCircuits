@@ -1,11 +1,14 @@
-import { InteractionMode, stateManager } from "../../State/StateManager";
+import { WorldObject, InteractionMode, stateManager } from "../../State/StateManager";
+import { state } from "../../State/state";
 
 
-/* TODO:
-    
-*/
+export const ComponentType = Object.freeze({
+    TRANSISTOR: "Transistor",
+    RESISTOR: "Resistor"
+});
+
 export class Component {
-    constructor(world, x, y, id) {
+    constructor(world, id, x, y, width, height) {
         this.world = world;
         this.id = id;
 
@@ -13,7 +16,7 @@ export class Component {
         this.element;
         this.position = { x: x, y: y };
 
-        this.size = { width: 100, height: 50 };
+        this.size = { width: width, height: height };
 
         this.isDragging = false;
         this.lastMousePosition = { x: 0, y: 0 };
@@ -21,6 +24,9 @@ export class Component {
         this.holdTime = 500;
         this.holdTimer;
         this.mouseLeave = false;
+
+        // * Component logic:
+        this.nodes = [];
 
         this.createElement();
         this.registerEvents();
@@ -33,12 +39,8 @@ export class Component {
         this.element.style.height = `${this.size.height}px`;
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
-        //this.element.style.border = `solid ${this.borderWidth}px`;
 
-        const numId = this.id.split("-", 2)[1];
-        this.element.innerHTML = `
-            <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${numId}</div>
-        `;
+        this.element.innerHTML = ``;
 
         this.world.appendChild(this.element);
 
@@ -48,6 +50,10 @@ export class Component {
     move() {
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
+
+        this.nodes.forEach((node) => {
+            node.moveWithComponent(this.position);
+        });
     }
 
     //Events:
@@ -62,23 +68,32 @@ export class Component {
     }
 
     onMouseDown(e) {
+        e.preventDefault();
         this.mouseLeave = false;
         if(e.button === 0) {
             this.element.classList.add("animate");
 
             this.holdTimer = setTimeout(() => {
-                // * State -----------------------------------------------
                 stateManager.interactionMode.set(InteractionMode.DRAGGING);
-                // * -----------------------------------------------------
 
                 this.isDragging = true;
             }, this.holdTime);
 
             this.lastMousePosition = { x: e.clientX, y: e.clientY };
 
+            stateManager.selectedWorldObject.set({
+                id: this.id,
+                type: WorldObject.COMPONENT
+            });
+
             e.stopPropagation();
         } else if(e.button === 2) {
-            
+            stateManager.setDefaultState();
+            stateManager.selectedWorldObject.set({
+                id: this.id,
+                type: WorldObject.COMPONENT
+            });
+            e.stopPropagation();
         }
     }
 
@@ -99,10 +114,7 @@ export class Component {
     onMouseUp(e) {
         if(e.button === 0) {
             if(this.isDragging) {
-                // * State -----------------------------------------------
-                stateManager.interactionMode.set(InteractionMode.NORMAL);
-                stateManager.interactionTrigger.signal();
-                // * -----------------------------------------------------
+                stateManager.setDefaultState();
             }
             
             this.element.classList.remove("animate");

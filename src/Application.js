@@ -1,8 +1,9 @@
-import { stateManager, InteractionMode } from "./State/StateManager";
+import { stateManager, InteractionMode, WorldObject } from "./State/StateManager";
 
 import { Camera } from "./Camera";
 import { NodeManager } from "./Objects/Nodes/NodeManager";
-import { NodeType } from "./Objects/Nodes/Node";
+import { ComponentManager } from "./Objects/Components/ComponentManager";
+
 
 export class Application {
     constructor() {
@@ -11,6 +12,7 @@ export class Application {
 
         this.camera = new Camera(this.world, this.scene, 0, 0, 1);
         this.nodeManager = new NodeManager(this.world);
+        this.componentManager = new ComponentManager(this.world, this.nodeManager);
 
         this.registerEvents();
     }
@@ -25,32 +27,45 @@ export class Application {
     }
 
     onMouseDown(e) {
+        // ? Could this logic be moved to nodeManager?
         if(e.button === 0) {
             if(stateManager.interactionMode.get() === InteractionMode.CREATING_NODE) {
                 const node = this.nodeManager.getNodeById(stateManager.currentNodeId.get());
                 node.isDragging = false;
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
-                stateManager.interactionTrigger.signal();
             } else if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
                 stateManager.lastNodeId.set(stateManager.currentNodeId.get());
 
                 const coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
                 this.nodeManager.createNode(coords.x, coords.y);
-                stateManager.interactionTrigger.signal();
+            } else {
+                stateManager.setDefaultState();
             }
         } else if(e.button === 2) {
-            stateManager.interactionMode.set(InteractionMode.NORMAL);
-            stateManager.interactionTrigger.signal();
+            stateManager.setDefaultState();
         }
     }
 
     onKeyDown(e) {
         if(e.key === "Delete") {
-            const nodeId = stateManager.currentNodeId.get();
-            const node = this.nodeManager.getNodeById(nodeId);
-            if(!node) return;
-            if(node.nodeType === NodeType.OUTPUT) this.nodeManager.deleteOutputNode(node);
-            else this.nodeManager.deleteNodeChain(node);
+            const selectedWorldObject = stateManager.selectedWorldObject.get();
+            if(selectedWorldObject.id === -1) return;
+
+            switch(selectedWorldObject.type) {
+                case WorldObject.NODE: {
+                    const nodeId = selectedWorldObject.id;
+                    this.nodeManager.deleteGeneralNodeById(nodeId);
+
+                    break;
+                } case WorldObject.COMPONENT: {
+                    const componentId = selectedWorldObject.id;
+                    this.componentManager.deleteComponentById(componentId);
+
+                    break;
+                }
+            }
+
+            stateManager.setDefaultState();
         }
     }
 }

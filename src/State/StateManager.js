@@ -8,52 +8,45 @@ export const InteractionMode = Object.freeze({
     CREATING_NODE: "Creating node"
 });
 
-export const Elements = Object.freeze({
-    WORLD: "World",
-    LOGIC_CONTAINER: "Logic container",
+export const WorldObject = Object.freeze({
     NODE: "Node",
+    COMPONENT: "Component"
 });
 
 class StateManager {
     constructor() {
         this.interactionMode = state(InteractionMode.NORMAL);
-        
-        this.interactedElementType = state(Elements.WORLD);
-        this.interactedElementSubtype = state("Undefined");
-        this.interactedElementId = state("Undefined");
+        this.selectedWorldObject = state({
+            id: -1,
+            type: undefined
+        });
 
+        // * Node connection state:
         this.inputNodeId = state(-1);
         this.connectingNodeId = state(-1);
         this.lastNodeId = state(-1);
         this.currentNodeId = state(-1);
-        this.parentNodeId = state(-1);
-        this.childNodeIds = state([]);
         this.outputNodeId = state(-1);
 
         // * Triggers:
         // *    Logic triggers:
         this.connectOutputTrigger = state();
-
-        // *    UI triggers:
-        this.interactionTrigger = state();
+        this.deleteComponentNodeTrigger = state();
     }
 
     setDefaultState() {
         this.interactionMode = state(InteractionMode.NORMAL);
-        
-        this.interactedElementType = state(Elements.WORLD);
-        this.interactedElementSubtype = state("Undefined");
-        this.interactedElementId = state("Undefined");
+        this.selectedWorldObject = state({
+            id: -1,
+            type: undefined
+        });
 
+        // * Node connection state:
         this.inputNodeId = state(-1);
         this.connectingNodeId = state(-1);
         this.lastNodeId = state(-1);
         this.currentNodeId = state(-1);
-        this.parentNodeId = state(-1);
-        this.childNodeIds = state([]);
         this.outputNodeId = state(-1);
-
-        this.interactionTrigger.signal();
     }
 }
 

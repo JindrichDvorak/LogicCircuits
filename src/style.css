@@ -16,7 +16,10 @@
 
     position: absolute;
     background: white;
-    border: solid 2px;
+}
+
+.component:hover {
+    border: solid 1px gold;
 }
 
 @property --c-angle {
@@ -35,7 +38,7 @@
     translate: -50% -50%;
     padding: 5px;
     background-image: conic-gradient(orange var(--c-angle), transparent 0deg);
-    animation: 0.5s lC-load linear forwards;
+    animation: 0.5s c-load linear forwards;
     z-index: -1;
 }
 
@@ -53,10 +56,12 @@
     position: absolute;
     border-radius: 50%;
     background: white;
+
+    border: solid 1px black;
 }
 
 .node:hover {
-    border: solid 2px gold;
+    border: solid 1px gold;
 }
 
 @property --n-angle {
