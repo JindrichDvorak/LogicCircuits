@@ -38,6 +38,14 @@ newResistor.addEventListener("click", (e) => {
   app.componentManager.createResistor(coords.x, coords.y, mouseX, mouseY);
 });
 
+const newGround = document.getElementById("newGround");
+newGround.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
+  app.componentManager.createGround(coords.x, coords.y, mouseX, mouseY);
+});
+
 // * Gates:
 const newBuffer = document.getElementById("newBuffer");
 newBuffer.addEventListener("click", (e) => {

@@ -1,3 +1,4 @@
+import { Ground } from "./BasicComponents/Ground";
 import { ResistorDown } from "./BasicComponents/ResistorDown";
 import { Transistor } from "./BasicComponents/Transistor";
 import { NOTgate } from "./LogicGates/NOTgate";
@@ -45,6 +46,16 @@ export class ComponentManager {
     }
 
     // TODO: Fix componentType:
+    createGround(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new Ground(this.world, id, x - 60 / 2, y - 40 / 2, 60, 40, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
     createBuffer(x, y, mouseX, mouseY) {
         const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
         const component = new BufferGate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);

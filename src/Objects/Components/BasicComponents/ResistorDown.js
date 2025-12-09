@@ -24,7 +24,7 @@ export class ResistorDown extends Component {
         const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
         this.element.innerHTML = img;
 
-        this.inNode = nodeManager.createOutputNode(this.size.width / 2, -10, 0, 0, true);
+        this.inNode = nodeManager.createOutputNode(this.size.width / 2, 0, 0, 0, true);
         this.nodes.push(this.inNode);
         this.inState = this.inNode.logicState;
 

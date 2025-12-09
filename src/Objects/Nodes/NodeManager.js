@@ -2,6 +2,7 @@ import { stateManager, InteractionMode, WorldObject } from "../../State/StateMan
 import { Node, NodeType } from "./Node";
 import { Wire } from "./Wire";
 
+
 /* TODO:
     * Modify node-user interaction through stateManager --> Use fever state variables.
     ? Input node deletion: If node doesn't have any children, delete it, otherwise, delete the connected node chain first.
@@ -156,12 +157,13 @@ export class NodeManager {
         outputNode.connectLogicStates(node.logicState);
         node.logicState.signal();
 
-        outputNode.inputNodeId = node.inputNodeId;
-
-        if(node.nodeType !== NodeType.INPUT) {
-            const inputNode = this.getNodeById(node.inputNodeId);
-            inputNode.outputNodeIds.push(outputNodeId);
+        if(node.inputNodeId === -1) {
+            outputNode.inputNodeId = node.id;
+        } else {
+            outputNode.inputNodeId = node.inputNodeId;
         }
+        const inputNode = this.getNodeById(outputNode.inputNodeId);
+        inputNode.outputNodeIds.push(outputNodeId);
     }
 
     deleteNode(node) {
