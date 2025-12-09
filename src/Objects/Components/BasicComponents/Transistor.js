@@ -1,6 +1,9 @@
 import { Component } from "../Component";
 import { stateExpression } from "../../../State/state";
 
+import imgSVG from "/transistorBJT.svg?raw";
+
+
 /* TODO:
     ! Find a more elegant solution for "curent direction".
 */
@@ -22,13 +25,17 @@ export class Transistor extends Component {
     }
 
     createComponent(nodeManager) {
+        const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
+        this.element.innerHTML = img;
+
+        /*
         this.element.innerHTML = `
             <img
                 src="/transistorBJT.svg" 
                 width="${this.size.width}px" 
                 style="user-select: none;"
             />
-        `;
+        `;*/
 
         const nodeOffset = 30;
 

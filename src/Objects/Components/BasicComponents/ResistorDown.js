@@ -1,6 +1,9 @@
 import { Component } from "../Component";
 import { stateExpression } from "../../../State/state";
 
+import imgSVG from "/resistor.svg?raw";
+
+
 /* TODO:
     ! Find a more elegant solution for "curent direction".
 */
@@ -18,13 +21,17 @@ export class ResistorDown extends Component {
     }
 
     createComponent(nodeManager) {
+        const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
+        this.element.innerHTML = img;
+
+        /*
         this.element.innerHTML = `
             <img
                 src="/resistor.svg" 
                 width="${this.size.width}px" 
                 style="user-select: none;"
             />
-        `;
+        `;*/
 
         this.inNode = nodeManager.createOuputNode(this.size.width / 2, -10, 0, 0, true);
         this.nodes.push(this.inNode);
