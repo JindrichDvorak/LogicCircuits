@@ -1,0 +1,66 @@
+import { Component } from "../Component";
+import { stateExpression } from "../../../State/state";
+
+import imgSVG from "/XOR.svg?raw";
+
+
+export class XORgate extends Component {
+    constructor(world, id, x, y, width, height, nodeManager) {
+        super(world, id, x, y, width, height);
+
+        this.aNode;
+        this.bNode;
+        this.outNode;
+
+        this.aState;
+        this.bState;
+        this.outState;
+
+        this.createComponent(nodeManager);
+    }
+
+    createComponent(nodeManager) {
+        const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
+        this.element.innerHTML = img;
+
+        // TODO: This needs to be size invariant --> remove and replace:
+        const inputNodeOffset = 12.5;
+        const outputNodeOffset = 2.5;
+
+        this.aNode = nodeManager.createOutputNode(0, inputNodeOffset, 0, 0, true);
+        this.nodes.push(this.aNode);
+        this.aState = this.aNode.logicState;
+
+        this.bNode = nodeManager.createOutputNode(0, this.size.height - inputNodeOffset, 0, 0, true);
+        this.nodes.push(this.bNode);
+        this.bState = this.bNode.logicState;
+
+        this.outNode = nodeManager.createInputNode(this.size.width, this.size.height / 2 - outputNodeOffset, 0, 0, true);
+        this.nodes.push(this.outNode);
+        this.outState = this.outNode.logicState;
+
+        this.outNode.logicState = stateExpression(
+            () => this.componentLogic(this.aState, this.bState), 
+            this.aState,
+            this.bState
+        );
+        this.outNode.logicState.subscribe(() => this.outNode.onLogicStateChange());
+    }
+
+    componentLogic(aState, bState) {
+        const value1 = aState.get();
+        const value2 = bState.get();
+
+        let result;
+        if(value1 === 0 && value2 === 0) {
+            result = 0;
+        } else if(value1 === 1 && value2 === 0) {
+            result = 1;
+        } else if(value1 === 0 && value2 === 1) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+        return result;
+    }
+}

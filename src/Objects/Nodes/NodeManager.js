@@ -119,7 +119,7 @@ export class NodeManager {
         this.nodeCounter++;
     }
 
-    createOuputNode(x, y, mouseX, mouseY, isComponentNode) {
+    createOutputNode(x, y, mouseX, mouseY, isComponentNode) {
         const id = `${NodeType.OUTPUT}-${this.outputCounter}`;
         const node = new Node(this.world, id, NodeType.OUTPUT, x - this.outputNodeWidth / 2, y - this.outputNodeHeight / 2, 
             this.outputNodeWidth, this.outputNodeHeight, isComponentNode);

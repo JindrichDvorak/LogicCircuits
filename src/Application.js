@@ -10,7 +10,7 @@ export class Application {
         this.world = document.getElementById("world");
         this.scene = document.getElementById("scene");
 
-        this.camera = new Camera(this.world, this.scene, 0, 0, 1);
+        this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
         this.nodeManager = new NodeManager(this.world);
         this.componentManager = new ComponentManager(this.world, this.nodeManager);
 

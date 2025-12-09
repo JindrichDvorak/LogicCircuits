@@ -1,5 +1,13 @@
 import { ResistorDown } from "./BasicComponents/ResistorDown";
 import { Transistor } from "./BasicComponents/Transistor";
+import { NOTgate } from "./LogicGates/NOTgate";
+import { BufferGate } from "./LogicGates/BufferGate";
+import { ANDgate } from "./LogicGates/ANDgate";
+import { NANDgate } from "./LogicGates/NANDgate";
+import { ORgate } from "./LogicGates/ORgate";
+import { NORgate } from "./LogicGates/NORgate";
+import { XORgate } from "./LogicGates/XORgate";
+import { NXORgate } from "./LogicGates/NXORgate";
 import { ComponentType } from "./Component";
 
 
@@ -15,7 +23,9 @@ export class ComponentManager {
 
     createTransistor(x, y, mouseX, mouseY) {
         const id = `${ComponentType.TRANSISTOR}-${this.componentCounter}`;
-        // TODO: Add componentType into component constructor:
+        // TODO: 
+        //  * Add componentType into component constructor:
+        //  ! Set width and height as variables:
         const component = new Transistor(this.world, id, x - 100 / 2, y - 100 / 2, 100, 100, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
@@ -26,8 +36,88 @@ export class ComponentManager {
 
     createResistor(x, y, mouseX, mouseY) {
         const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        // TODO: Add componentType into component constructor:
         const component = new ResistorDown(this.world, id, x - 20 / 2, y - 100 / 2, 20, 100, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    // TODO: Fix componentType:
+    createBuffer(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new BufferGate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createNOT(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new NOTgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createAND(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new ANDgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createNAND(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new NANDgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createOR(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new ORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createNOR(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new NORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createXOR(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new XORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createNXOR(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new NXORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
