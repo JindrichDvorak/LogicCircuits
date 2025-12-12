@@ -9,6 +9,8 @@ import { ORgate } from "./LogicGates/ORgate";
 import { NORgate } from "./LogicGates/NORgate";
 import { XORgate } from "./LogicGates/XORgate";
 import { NXORgate } from "./LogicGates/NXORgate";
+import { HalfAdder } from "./Circuits/HalfAdder";
+import { FullAdder } from "./Circuits/FullAdder";
 import { ComponentType } from "./Component";
 
 
@@ -129,6 +131,26 @@ export class ComponentManager {
     createNXOR(x, y, mouseX, mouseY) {
         const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
         const component = new NXORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createHalfAdder(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new HalfAdder(this.world, id, x - 140 / 2, y - 80 / 2, 140, 80, this.nodeManager);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
+    createFullAdder(x, y, mouseX, mouseY) {
+        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
+        const component = new FullAdder(this.world, id, x - 140 / 2, y - 120 / 2, 140, 120, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 

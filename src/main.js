@@ -20,7 +20,7 @@ newOutput.addEventListener("click", (e) => {
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.nodeManager.createOutputNode(coords.x, coords.y, mouseX, mouseY, false);
 });
-
+/*
 // * RTL:
 const newTransistor = document.getElementById("newTransistor");
 newTransistor.addEventListener("click", (e) => {
@@ -45,7 +45,7 @@ newGround.addEventListener("click", (e) => {
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.componentManager.createGround(coords.x, coords.y, mouseX, mouseY);
 });
-
+*/
 // * Gates:
 const newBuffer = document.getElementById("newBuffer");
 newBuffer.addEventListener("click", (e) => {
@@ -110,7 +110,7 @@ newNXOR.addEventListener("click", (e) => {
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.componentManager.createNXOR(coords.x, coords.y, mouseX, mouseY);
 });
-/*
+
 // * Circuits:
 const newHalfAdder = document.getElementById("newHalfAdder");
 newHalfAdder.addEventListener("click", (e) => {
@@ -126,4 +126,4 @@ newFullAdder.addEventListener("click", (e) => {
   const mouseY = e.clientY;
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.componentManager.createFullAdder(coords.x, coords.y, mouseX, mouseY);
-});*/
+});
