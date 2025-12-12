@@ -4,17 +4,34 @@ import { Camera } from "./Camera";
 import { NodeManager } from "./Objects/Nodes/NodeManager";
 import { ComponentManager } from "./Objects/Components/ComponentManager";
 
+import { TextField } from "./Objects/TextField";
+
 
 export class Application {
     constructor() {
         this.world = document.getElementById("world");
         this.scene = document.getElementById("scene");
 
-        this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
+        this.camera = new Camera(this.world, this.scene, 0, 0, 1);
         this.nodeManager = new NodeManager(this.world);
         this.componentManager = new ComponentManager(this.world, this.nodeManager);
 
+        // TODO: Create a dedicated manager:
+        this.textFieldCounter = 0;
+        this.textFields = [];
+
         this.registerEvents();
+    }
+
+    // TODO: Move to manager:
+    createTextField(x, y, mouseX, mouseY) {
+        const id = `TextField-${this.textFieldCounter}`;
+        const textField = new TextField(this.world, id, x - 30 / 2, y - 20 / 2, 30, 20);
+        textField.lastMousePosition = { x: mouseX, y: mouseY };
+        textField.isDragging = true;
+
+        this.textFields.push(textField);
+        this.textFieldCounter++;
     }
 
     registerEvents() {

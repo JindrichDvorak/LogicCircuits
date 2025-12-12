@@ -21,6 +21,14 @@ newOutput.addEventListener("click", (e) => {
   app.nodeManager.createOutputNode(coords.x, coords.y, mouseX, mouseY, false);
 });
 /*
+const newTextField = document.getElementById("newTextField");
+newTextField.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
+  app.createTextField(coords.x, coords.y, mouseX, mouseY);
+});*/
+/*
 // * RTL:
 const newTransistor = document.getElementById("newTransistor");
 newTransistor.addEventListener("click", (e) => {
