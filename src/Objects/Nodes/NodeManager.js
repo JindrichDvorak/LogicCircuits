@@ -5,7 +5,7 @@ import { Wire } from "./Wire";
 
 /* TODO:
     * Modify node-user interaction through stateManager --> Use fever state variables.
-    ? Input node deletion: If node doesn't have any children, delete it, otherwise, delete the connected node chain first.
+    ? Input node deletion: If node doesn't have any children, delete it, otherwise, delete the connected node chain first.  !DONE!
 */
 export class NodeManager {
     constructor(world) {
@@ -104,6 +104,7 @@ export class NodeManager {
 
         const parentNode = this.getNodeById(node.parentNodeId);
         parentNode.childNodeIds.push(node.id);
+        if(parentNode.childNodeIds.length > 1) parentNode.isJoint = true;
 
         const wire = new Wire(parentNode, node, this.wireHolder);
         node.wires.push(wire);
@@ -133,6 +134,8 @@ export class NodeManager {
                 id: id,
                 type: WorldObject.NODE
             });
+
+            node.isGlobalOutput = true;
 
             node.lastMousePosition = { x: mouseX, y: mouseY };
             node.isDragging = true;
@@ -234,7 +237,10 @@ export class NodeManager {
         this.deleteChildren(node);
         if(node.parentNodeId !== -1) {
             const parentNode = this.getNodeById(node.parentNodeId);
-            if(parentNode) parentNode.childNodeIds.splice(parentNode.childNodeIds.indexOf(node.id), 1);
+            if(parentNode) {
+                parentNode.childNodeIds.splice(parentNode.childNodeIds.indexOf(node.id), 1);
+                if(parentNode.childNodeIds.length <= 1) parentNode.isJoint = false;
+            }
         }
         this.deleteNode(node);
 
@@ -251,8 +257,10 @@ export class NodeManager {
     deleteGeneralNodeById(nodeId) {
         const node = this.getNodeById(nodeId);
 
-        if(node.isComponentNode) return;
-
-        this.deleteGeneralNode(node);
+        if(node.isComponentNode) this.deleteChildren(node);
+        else if(node.nodeType === NodeType.INPUT && node.childNodeIds.length > 0) {
+            this.deleteChildren(node);
+        }
+        else this.deleteGeneralNode(node);
     }
 }

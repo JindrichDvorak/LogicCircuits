@@ -6,8 +6,8 @@ import imgSVG from "/AND.svg?raw";
 
 
 export class ANDgate extends Component {
-    constructor(world, id, x, y, width, height, nodeManager) {
-        super(world, id, x, y, width, height);
+    constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
+        super(world, componentType, idNum, x, y, width, height);
 
         this.aNode;
         this.bNode;

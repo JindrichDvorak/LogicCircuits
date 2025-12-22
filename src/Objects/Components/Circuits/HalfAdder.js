@@ -5,8 +5,8 @@ import imgSVG from "/halfAdder.svg?raw";
 
 
 export class HalfAdder extends Component {
-    constructor(world, id, x, y, width, height, nodeManager) {
-        super(world, id, x, y, width, height);
+    constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
+        super(world, componentType, idNum, x, y, width, height);
 
         this.aNode;
         this.bNode;
@@ -37,13 +37,13 @@ export class HalfAdder extends Component {
         this.nodes.push(this.bNode);
         this.bState = this.bNode.logicState;
 
-        this.sNode = nodeManager.createInputNode(this.size.width, nodeOffsetTop, 0, 0, true);
-        this.nodes.push(this.sNode);
-        this.sState = this.sNode.logicState;
-
-        this.cNode = nodeManager.createInputNode(this.size.width, this.size.height - nodeOffsetBot, 0, 0, true);
+        this.cNode = nodeManager.createInputNode(this.size.width, nodeOffsetTop, 0, 0, true);
         this.nodes.push(this.cNode);
         this.cState = this.cNode.logicState;
+
+        this.sNode = nodeManager.createInputNode(this.size.width, this.size.height - nodeOffsetBot, 0, 0, true);
+        this.nodes.push(this.sNode);
+        this.sState = this.sNode.logicState;
 
         this.sNode.logicState = stateExpression(
             () => this.componentLogicS(this.aState, this.bState), 

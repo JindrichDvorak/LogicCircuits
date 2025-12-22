@@ -20,7 +20,15 @@ newOutput.addEventListener("click", (e) => {
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.nodeManager.createOutputNode(coords.x, coords.y, mouseX, mouseY, false);
 });
-/*
+
+const newTextField = document.getElementById("newTextField");
+newTextField.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
+  app.componentManager.createTextField(coords.x, coords.y, mouseX, mouseY);
+});
+
 // * RTL:
 const newTransistor = document.getElementById("newTransistor");
 newTransistor.addEventListener("click", (e) => {
@@ -45,7 +53,7 @@ newGround.addEventListener("click", (e) => {
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.componentManager.createGround(coords.x, coords.y, mouseX, mouseY);
 });
-*/
+
 // * Gates:
 const newBuffer = document.getElementById("newBuffer");
 newBuffer.addEventListener("click", (e) => {

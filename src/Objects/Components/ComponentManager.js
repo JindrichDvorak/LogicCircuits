@@ -1,3 +1,4 @@
+import { TextField } from "./TextField";
 import { Ground } from "./BasicComponents/Ground";
 import { ResistorDown } from "./BasicComponents/ResistorDown";
 import { Transistor } from "./BasicComponents/Transistor";
@@ -12,24 +13,34 @@ import { NXORgate } from "./LogicGates/NXORgate";
 import { HalfAdder } from "./Circuits/HalfAdder";
 import { FullAdder } from "./Circuits/FullAdder";
 import { ComponentType } from "./Component";
+import { stateManager } from "../../State/StateManager";
 
 
+/* TODO:
+    ! Set width and height as variables.
+*/
 export class ComponentManager {
     constructor(world, nodeManager) {
         this.world = world;
         this.nodeManager = nodeManager;
 
         this.components = [];
+        this.resistorCount = 0;
 
         this.componentCounter = 0;
     }
 
+    createTextField(x, y, mouseX, mouseY) {
+        const component = new TextField(this.world, ComponentType.TEXT_FIELD, this.componentCounter, x - 35 / 2, y - 15 / 2, 35, 15);
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        component.isDragging = true;
+
+        this.components.push(component);
+        this.componentCounter++;
+    }
+
     createTransistor(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.TRANSISTOR}-${this.componentCounter}`;
-        // TODO: 
-        //  * Add componentType into component constructor:
-        //  ! Set width and height as variables:
-        const component = new Transistor(this.world, id, x - 100 / 2, y - 100 / 2, 100, 100, this.nodeManager);
+        const component = new Transistor(this.world, ComponentType.TRANSISTOR, this.componentCounter, x - 100 / 2, y - 100 / 2, 100, 100, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -38,19 +49,20 @@ export class ComponentManager {
     }
 
     createResistor(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new ResistorDown(this.world, id, x - 20 / 2, y - 100 / 2, 20, 100, this.nodeManager);
+        const component = new ResistorDown(this.world, ComponentType.RESISTOR, this.componentCounter, x - 20 / 2, y - 100 / 2, 20, 100, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
         this.components.push(component);
         this.componentCounter++;
+
+        this.resistorCount++;
+        stateManager.hasResistors.set(true);
     }
 
     // TODO: Fix componentType:
     createGround(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new Ground(this.world, id, x - 60 / 2, y - 40 / 2, 60, 40, this.nodeManager);
+        const component = new Ground(this.world, ComponentType.GROUND, this.componentCounter, x - 60 / 2, y - 40 / 2, 60, 40, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -59,8 +71,7 @@ export class ComponentManager {
     }
 
     createBuffer(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new BufferGate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new BufferGate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -69,8 +80,7 @@ export class ComponentManager {
     }
 
     createNOT(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new NOTgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new NOTgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -79,8 +89,7 @@ export class ComponentManager {
     }
 
     createAND(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new ANDgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new ANDgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -89,8 +98,7 @@ export class ComponentManager {
     }
 
     createNAND(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new NANDgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new NANDgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -99,8 +107,7 @@ export class ComponentManager {
     }
 
     createOR(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new ORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new ORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -109,8 +116,7 @@ export class ComponentManager {
     }
 
     createNOR(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new NORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new NORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -119,8 +125,7 @@ export class ComponentManager {
     }
 
     createXOR(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new XORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new XORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -129,8 +134,7 @@ export class ComponentManager {
     }
 
     createNXOR(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new NXORgate(this.world, id, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const component = new NXORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -139,8 +143,7 @@ export class ComponentManager {
     }
 
     createHalfAdder(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new HalfAdder(this.world, id, x - 140 / 2, y - 80 / 2, 140, 80, this.nodeManager);
+        const component = new HalfAdder(this.world, ComponentType.CIRCUIT, this.componentCounter, x - 140 / 2, y - 80 / 2, 140, 80, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -149,8 +152,7 @@ export class ComponentManager {
     }
 
     createFullAdder(x, y, mouseX, mouseY) {
-        const id = `${ComponentType.RESISTOR}-${this.componentCounter}`;
-        const component = new FullAdder(this.world, id, x - 140 / 2, y - 120 / 2, 140, 120, this.nodeManager);
+        const component = new FullAdder(this.world, ComponentType.CIRCUIT, this.componentCounter, x - 140 / 2, y - 120 / 2, 140, 120, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -172,12 +174,22 @@ export class ComponentManager {
     deleteComponent(component) {
         if(!component) return;
 
+        // TODO: Find a more elegant solution:
+        if(component.editable) return;
+
         component.nodes.forEach((node) => {
             this.nodeManager.deleteGeneralNode(node);
         });
         component.nodes = [];
-
         component.element.remove();
+
+        if(component.componentType === ComponentType.RESISTOR) {
+            this.resistorCount--;
+            if(this.resistorCount === 0) {
+                stateManager.hasResistors.set(false);
+            }
+        }
+        this.components.splice(this.components.indexOf(component), 1);
     }
 
     deleteComponentById(componentId) {

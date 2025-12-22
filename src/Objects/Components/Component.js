@@ -3,13 +3,19 @@ import { state } from "../../State/state";
 
 
 export const ComponentType = Object.freeze({
+    TEXT_FIELD: "Text",
     TRANSISTOR: "Transistor",
-    RESISTOR: "Resistor"
+    RESISTOR: "Resistor",
+    GROUND: "Ground",
+    GATE: "Gate",
+    CIRCUIT: "Circuit"
 });
 
 export class Component {
-    constructor(world, id, x, y, width, height) {
+    constructor(world, componentType, idNum, x, y, width, height) {
         this.world = world;
+        this.componentType = componentType;
+        const id = `${componentType}-${idNum}`;
         this.id = id;
 
         // * Interaction:
@@ -68,7 +74,7 @@ export class Component {
     }
 
     onMouseDown(e) {
-        e.preventDefault();
+        //e.preventDefault();
         this.mouseLeave = false;
         if(e.button === 0) {
             this.element.classList.add("animate");

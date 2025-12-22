@@ -28,6 +28,9 @@ class StateManager {
         this.currentNodeId = state(-1);
         this.outputNodeId = state(-1);
 
+        // * Circuit state:
+        this.hasResistors = state(false);
+
         // * Triggers:
         // *    Logic triggers:
         this.connectOutputTrigger = state();

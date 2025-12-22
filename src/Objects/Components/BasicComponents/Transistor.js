@@ -5,8 +5,8 @@ import imgSVG from "/transistorBJT.svg?raw";
 
 
 export class Transistor extends Component {
-    constructor(world, id, x, y, width, height, nodeManager) {
-        super(world, id, x, y, width, height);
+    constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
+        super(world, componentType, idNum, x, y, width, height);
 
         this.img;
 

@@ -5,8 +5,8 @@ import imgSVG from "/ground.svg?raw";
 
 
 export class Ground extends Component {
-    constructor(world, id, x, y, width, height, nodeManager) {
-        super(world, id, x, y, width, height);
+    constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
+        super(world, componentType, idNum, x, y, width, height);
 
         this.inNode;
 
@@ -21,5 +21,6 @@ export class Ground extends Component {
 
         this.inNode = nodeManager.createOutputNode(this.size.width / 2 - nodeOffset, 0, 0, 0, true);
         this.nodes.push(this.inNode);
+        this.inNode.isGlobalOutput = true;
     }
 }

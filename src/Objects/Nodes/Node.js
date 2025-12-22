@@ -6,7 +6,7 @@ import { stateNeg } from "../../logic";
 /* TODO:
     * Fix node jerk on hover (border). 
     * Add input and output node text labels.
-        * Remove numbering inside input and output nodes.
+        * Remove numbering inside input and output nodes.                           !DONE!
         * Add input and output node grouping (multiple nodes with one label).
             ? Add sublabeling within node groups.
     ! Add "input logic state" -- 0, or 1.                                           !DONE!
@@ -62,6 +62,14 @@ export class Node {
             this.logicState.subscribe(() => this.onLogicStateChange());
         }
         this.unsubFromParentLogicState;
+        if(isComponentNode && nodeType === NodeType.OUTPUT) {
+            this.isGlobalOutput = true;
+        } else {
+            this.isGlobalOutput = false;
+        }
+        this.isJoint = false;
+        this.isConnectedToTransistor = false;
+        this.isConnectedToResistor = false;
 
         // * Component node logic:
         this.isComponentNode = isComponentNode;
@@ -79,13 +87,6 @@ export class Node {
         this.element.style.left = `${this.position.x}px`;
         this.element.style.top = `${this.position.y}px`;
 
-        //if(this.nodeType !== NodeType.NODE) this.element.style.border = "solid 2px black";
-
-        /*
-        const numId = this.id.split("-", 2)[1];
-        this.element.innerHTML = `
-            <div style="display: flex; height: 100%; justify-content: center; align-items: center;">${numId}</div>
-        `;*/
         if(this.nodeType === NodeType.NODE) {
             this.element.innerHTML = ``;
             this.element.style.background = "black";

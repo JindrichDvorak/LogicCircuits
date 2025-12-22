@@ -8,8 +8,8 @@ import imgSVG from "/resistor.svg?raw";
     ! Find a more elegant solution for "curent direction".
 */
 export class ResistorDown extends Component {
-    constructor(world, id, x, y, width, height, nodeManager) {
-        super(world, id, x, y, width, height);
+    constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
+        super(world, componentType, idNum, x, y, width, height);
 
         this.inNode;
         this.outNode;

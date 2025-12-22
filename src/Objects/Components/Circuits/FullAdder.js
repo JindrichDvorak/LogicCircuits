@@ -5,8 +5,8 @@ import imgSVG from "/fullAdder.svg?raw";
 
 
 export class FullAdder extends Component {
-    constructor(world, id, x, y, width, height, nodeManager) {
-        super(world, id, x, y, width, height);
+    constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
+        super(world, componentType, idNum, x, y, width, height);
 
         this.aNode;
         this.bNode;
