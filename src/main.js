@@ -1,4 +1,5 @@
 import { Application } from "./Application";
+import { debugUILogic } from "./debugUI";
 
 
 const app = new Application();
@@ -135,3 +136,6 @@ newFullAdder.addEventListener("click", (e) => {
   const coords = app.camera.screenToWorldCoords(mouseX, mouseY);
   app.componentManager.createFullAdder(coords.x, coords.y, mouseX, mouseY);
 });
+
+// TODO: remove:
+//debugUILogic(app.nodeManager);

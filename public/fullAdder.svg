@@ -367,7 +367,7 @@
      transform="translate(-134.75,-104.75)"><g
        id="g138"
        style="stroke-width:0.5;stroke-dasharray:none"><path
-         style="display:inline;fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
          d="m 140,110 v 20 h 25 v -20 z"
          id="path127" /><path
          style="display:inline;fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"

@@ -15,11 +15,11 @@
     user-select: none;
 
     position: absolute;
-    background: white;
 }
 
 .component:hover {
     border: solid 1px gold;
+    background: white;
 }
 
 @property --c-angle {

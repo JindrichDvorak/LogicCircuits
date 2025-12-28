@@ -39,10 +39,10 @@ export class Application {
                 const coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
                 this.nodeManager.createNode(coords.x, coords.y);
             } else {
-                stateManager.setDefaultState();
+                stateManager.setDefaultInteractionState();
             }
         } else if(e.button === 2) {
-            stateManager.setDefaultState();
+            stateManager.setDefaultInteractionState();
         }
     }
 
@@ -65,7 +65,7 @@ export class Application {
                 }
             }
 
-            stateManager.setDefaultState();
+            stateManager.setDefaultInteractionState();
         }
     }
 }

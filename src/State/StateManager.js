@@ -29,15 +29,21 @@ class StateManager {
         this.outputNodeId = state(-1);
 
         // * Circuit state:
-        this.hasResistors = state(false);
+        this.resistorPresent = state(false);
+        this.groundPresent = state(false);
+        this.transistorPresent = state(false);
 
         // * Triggers:
         // *    Logic triggers:
         this.connectOutputTrigger = state();
         this.deleteComponentNodeTrigger = state();
+        this.recalcualteResistanceTrigger = state();
+
+        // TODO: Debug triggers:
+        this.interactionTrigger = state();
     }
 
-    setDefaultState() {
+    setDefaultInteractionState() {
         this.interactionMode = state(InteractionMode.NORMAL);
         this.selectedWorldObject = state({
             id: -1,

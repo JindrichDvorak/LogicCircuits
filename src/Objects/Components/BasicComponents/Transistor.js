@@ -1,5 +1,6 @@
 import { Component } from "../Component";
 import { stateExpression } from "../../../State/state";
+import { stateManager } from "../../../State/StateManager"; 
 
 import imgSVG from "/transistorBJT.svg?raw";
 
@@ -39,6 +40,11 @@ export class Transistor extends Component {
         this.nodes.push(this.emitterNode);
         this.emitterState = this.emitterNode.logicState;
 
+        this.collectorNode.componentChildNodeId = this.emitterNode.id;
+        this.collectorNode.isTransistorNode = true;
+        this.emitterNode.componentParentNodeId = this.collectorNode.id;
+        this.emitterNode.isTransistorNode = true;
+
         this.emitterNode.logicState = stateExpression(
             () => this.componentLogic(this.baseState, this.collectorState), 
             this.baseState,
@@ -50,11 +56,14 @@ export class Transistor extends Component {
     componentLogic(baseState, collectorState) {
         // TODO: It could be more elegant:
         if(collectorState.get() == 0) {
+            this.collectorNode.transistorOn = false;
             return 0;
         } else {
             if(baseState.get() === 0) {
+                this.collectorNode.transistorOn = false;
                 return 0;
             } else {
+                this.collectorNode.transistorOn = true;
                 return collectorState.get();
             }
         }

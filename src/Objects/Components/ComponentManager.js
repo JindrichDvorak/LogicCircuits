@@ -1,6 +1,6 @@
 import { TextField } from "./TextField";
 import { Ground } from "./BasicComponents/Ground";
-import { ResistorDown } from "./BasicComponents/ResistorDown";
+import { Resistor } from "./BasicComponents/Resistor";
 import { Transistor } from "./BasicComponents/Transistor";
 import { NOTgate } from "./LogicGates/NOTgate";
 import { BufferGate } from "./LogicGates/BufferGate";
@@ -26,6 +26,8 @@ export class ComponentManager {
 
         this.components = [];
         this.resistorCount = 0;
+        this.groundCount = 0;
+        this.transistorCount = 0;
 
         this.componentCounter = 0;
     }
@@ -46,10 +48,13 @@ export class ComponentManager {
 
         this.components.push(component);
         this.componentCounter++;
+
+        this.transistorCount++;
+        stateManager.transistorPresent.set(true);
     }
 
     createResistor(x, y, mouseX, mouseY) {
-        const component = new ResistorDown(this.world, ComponentType.RESISTOR, this.componentCounter, x - 20 / 2, y - 100 / 2, 20, 100, this.nodeManager);
+        const component = new Resistor(this.world, ComponentType.RESISTOR, this.componentCounter, x - 20 / 2, y - 100 / 2, 20, 100, this.nodeManager);
         component.lastMousePosition = { x: mouseX, y: mouseY };
         component.isDragging = true;
 
@@ -57,7 +62,7 @@ export class ComponentManager {
         this.componentCounter++;
 
         this.resistorCount++;
-        stateManager.hasResistors.set(true);
+        stateManager.resistorPresent.set(true);
     }
 
     // TODO: Fix componentType:
@@ -68,6 +73,9 @@ export class ComponentManager {
 
         this.components.push(component);
         this.componentCounter++;
+
+        this.groundCount++;
+        stateManager.groundPresent.set(true);
     }
 
     createBuffer(x, y, mouseX, mouseY) {
@@ -185,9 +193,16 @@ export class ComponentManager {
 
         if(component.componentType === ComponentType.RESISTOR) {
             this.resistorCount--;
-            if(this.resistorCount === 0) {
-                stateManager.hasResistors.set(false);
-            }
+            if(this.resistorCount === 0) 
+                stateManager.resistorPresent.set(false);
+        } else if(component.componentType === ComponentType.GROUND) {
+            this.groundCount--;
+            if(this.groundCount === 0) 
+                stateManager.groundPresent.set(false);
+        } else if(component.componentType === ComponentType.TRANSISTOR) {
+            this.transistorCount--;
+            if(this.transistorCount === 0) 
+                stateManager.transistorPresent.set(false);
         }
         this.components.splice(this.components.indexOf(component), 1);
     }

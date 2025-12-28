@@ -68,12 +68,21 @@ export class Node {
             this.isGlobalOutput = false;
         }
         this.isJoint = false;
-        this.isConnectedToTransistor = false;
-        this.isConnectedToResistor = false;
+        this.componentParentNodeId = -1;
+        this.componentChildNodeId = -1;
+        this.isGrounded = false;
+        this.isResistorNode = false;
+        this.isTransistorNode = false;
+        this.resistorCount = 0;
+        this.connectedToGround = false;
+        this.isOpen = true;
+        
+        this.joints = [];
 
         // * Component node logic:
         this.isComponentNode = isComponentNode;
         this.relativePosition = { x: 0, y: 0 };
+        this.transistorOn = false;
 
         this.createElement();
         this.registerEvents();
@@ -93,6 +102,14 @@ export class Node {
         }
 
         this.world.appendChild(this.element);
+
+        /*// TODO: Remove:
+        const text = document.createElement("span");
+        text.innerText = this.id;
+        text.style.background = "white";
+        text.style.left = `${this.size.width + 10}px`;
+        text.style.position = "absolute";
+        this.element.appendChild(text);*/
 
         this.move();
     }
@@ -124,7 +141,7 @@ export class Node {
                 wire.wireColor = "black";
                 wire.drawWire();
             });
-        } else {
+        } else if(this.isOpen) {
             this.element.style.background = "red";
             this.wires.forEach((wire) => {
                 wire.wireColor = "red";
@@ -136,6 +153,29 @@ export class Node {
     connectLogicStates(parentLogicState) {
         this.unsubFromParentLogicState = parentLogicState.subscribe(() => {
             this.logicState.set(parentLogicState.get());
+        });
+    }
+
+    addChildNode(childNodeId) {
+        this.childNodeIds.push(childNodeId);
+        if(this.childNodeIds.length > 1) this.isJoint = true;
+    }
+
+    removeChildNode(childNodeId) {
+        this.childNodeIds.splice(this.childNodeIds.indexOf(childNodeId), 1);
+        if(this.childNodeIds.length <= 1) this.isJoint = false;
+    }
+
+    sortJoints() {
+        this.joints.sort(function(a, b) {
+            let id1 = a.id;
+            let id2 = b.id;
+            const idNum1 = id1.split("-", 2)[1];
+            const idNum2 = id2.split("-", 2)[1];
+
+            if(idNum1 < idNum2) return -1;
+            if(idNum1 > idNum2) return 1;
+            return 0;
         });
     }
 
@@ -160,7 +200,7 @@ export class Node {
 
                     stateManager.connectOutputTrigger.signal();
 
-                    stateManager.setDefaultState();
+                    stateManager.setDefaultInteractionState();
 
                     e.stopPropagation();
                 }
@@ -209,6 +249,8 @@ export class Node {
 
             e.stopPropagation();
         }
+        // TODO: Remove:
+        stateManager.interactionTrigger.signal();
     }
 
     onMouseMove(e) {
@@ -228,9 +270,10 @@ export class Node {
     onMouseUp(e) {
         if(e.button === 0) {
             if(this.isDragging) {
-                stateManager.setDefaultState();
+                stateManager.setDefaultInteractionState();
             } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && !this.isComponentNode) {
                 this.logicState.set(stateNeg(this.logicState));
+                stateManager.recalcualteResistanceTrigger.signal();
             }
             
             this.element.classList.remove("animate");

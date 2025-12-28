@@ -7,7 +7,7 @@ import imgSVG from "/resistor.svg?raw";
 /* TODO:
     ! Find a more elegant solution for "curent direction".
 */
-export class ResistorDown extends Component {
+export class Resistor extends Component {
     constructor(world, componentType, idNum, x, y, width, height, nodeManager) {
         super(world, componentType, idNum, x, y, width, height);
 
@@ -32,6 +32,11 @@ export class ResistorDown extends Component {
         this.nodes.push(this.outNode);
         this.outState = this.outNode.logicState;
 
+        this.inNode.componentChildNodeId = this.outNode.id;
+        this.inNode.isResistorNode = true;
+        this.outNode.componentParentNodeId = this.inNode.id;
+        this.outNode.isResistorNode = true;
+
         this.outNode.logicState = stateExpression(
             () => this.componentLogic(this.inState), 
             this.inState
@@ -43,8 +48,7 @@ export class ResistorDown extends Component {
         if(inState.get() == 0) {
             return 0;
         } else {
-            // ! Remove this!
-            return 0;
+            return 1;
         }
     }
 }

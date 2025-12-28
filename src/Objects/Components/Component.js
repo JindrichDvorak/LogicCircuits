@@ -94,7 +94,7 @@ export class Component {
 
             e.stopPropagation();
         } else if(e.button === 2) {
-            stateManager.setDefaultState();
+            stateManager.setDefaultInteractionState();
             stateManager.selectedWorldObject.set({
                 id: this.id,
                 type: WorldObject.COMPONENT
@@ -120,7 +120,7 @@ export class Component {
     onMouseUp(e) {
         if(e.button === 0) {
             if(this.isDragging) {
-                stateManager.setDefaultState();
+                stateManager.setDefaultInteractionState();
             }
             
             this.element.classList.remove("animate");
