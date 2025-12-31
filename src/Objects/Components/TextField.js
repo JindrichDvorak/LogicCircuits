@@ -25,6 +25,7 @@ export class TextField extends Component {
     registerTextFieldEvents() {
         this.element.addEventListener("dblclick", (e) => this.onDoubleClick(e));
         this.element.addEventListener("keydown", (e) => this.onKeyDown(e));
+        this.element.addEventListener("input", (e) => this.onInput(e));
     }
 
     onDoubleClick(e) {
@@ -39,5 +40,9 @@ export class TextField extends Component {
             this.editable = false;
             this.element.contentEditable = this.editable;
         }
+    }
+
+    onInput(e) {
+        this.text = this.element.innerText;
     }
 }

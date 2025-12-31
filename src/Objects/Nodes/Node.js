@@ -27,8 +27,9 @@ export const NodeType = Object.freeze({
 });
 
 export class Node {
-    constructor(world, id, nodeType, x, y, width, height, isComponentNode) {
-        this.world = world;
+    constructor(camera, id, nodeType, x, y, width, height, isComponentNode) {
+        this.camera = camera;
+        this.world = this.camera.world;
         this.id = id;
 
         // * Interaction:
@@ -62,20 +63,11 @@ export class Node {
             this.logicState.subscribe(() => this.onLogicStateChange());
         }
         this.unsubFromParentLogicState;
-        if(isComponentNode && nodeType === NodeType.OUTPUT) {
-            this.isGlobalOutput = true;
-        } else {
-            this.isGlobalOutput = false;
-        }
-        this.isJoint = false;
         this.componentParentNodeId = -1;
         this.componentChildNodeId = -1;
         this.isGrounded = false;
         this.isResistorNode = false;
         this.isTransistorNode = false;
-        this.resistorCount = 0;
-        this.connectedToGround = false;
-        this.isOpen = true;
         
         this.joints = [];
 
@@ -83,6 +75,10 @@ export class Node {
         this.isComponentNode = isComponentNode;
         this.relativePosition = { x: 0, y: 0 };
         this.transistorOn = false;
+
+        // TODO: Find a better solution:
+        // ! After loading, input nodes react to mouseup events originating from world.
+        this.isBlocked = false;
 
         this.createElement();
         this.registerEvents();
@@ -131,6 +127,8 @@ export class Node {
     }
 
     onLogicStateChange() {
+        if(!this.logicState.allowSignal) this.logicState.set(0);
+
         if(this.logicState.get() === 0) {
             if(this.nodeType === NodeType.INPUT || this.nodeType === NodeType.OUTPUT) {
                 this.element.style.background = "white";
@@ -141,7 +139,7 @@ export class Node {
                 wire.wireColor = "black";
                 wire.drawWire();
             });
-        } else if(this.isOpen) {
+        } else {
             this.element.style.background = "red";
             this.wires.forEach((wire) => {
                 wire.wireColor = "red";
@@ -158,12 +156,10 @@ export class Node {
 
     addChildNode(childNodeId) {
         this.childNodeIds.push(childNodeId);
-        if(this.childNodeIds.length > 1) this.isJoint = true;
     }
 
     removeChildNode(childNodeId) {
         this.childNodeIds.splice(this.childNodeIds.indexOf(childNodeId), 1);
-        if(this.childNodeIds.length <= 1) this.isJoint = false;
     }
 
     sortJoints() {
@@ -192,21 +188,23 @@ export class Node {
 
     // TODO: Fix e.stopPropagation():
     onMouseDown(e) {
+        // TODO: Remove:
+        this.isBlocked = false;
+
         this.mouseLeave = false;
         if(e.button === 0) {
             if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
                 if(this.nodeType === NodeType.OUTPUT && this.inputNodeId === -1) {
-                    stateManager.outputNodeId.set(this.id);
-
-                    stateManager.connectOutputTrigger.signal();
-
-                    stateManager.setDefaultInteractionState();
-
-                    e.stopPropagation();
+                    stateManager.connectOutputTrigger.signal(this.id);
+                } else {
+                    stateManager.interactionMode.set(InteractionMode.NORMAL);
+                    stateManager.selectedWorldObject.set({
+                        id: this.id,
+                        type: WorldObject.NODE
+                    });
                 }
             } else {
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
-                stateManager.currentNodeId.set(this.id);
                 stateManager.selectedWorldObject.set({
                     id: this.id,
                     type: WorldObject.NODE
@@ -221,7 +219,8 @@ export class Node {
                         this.isDragging = true;
                     }, this.holdTime);
 
-                    this.lastMousePosition = { x: e.clientX, y: e.clientY };
+                    const mousePosition = this.camera.screenToWorldCoords(e.clientX, e.clientY);
+                    this.lastMousePosition = { x: mousePosition.x, y: mousePosition.y };
                 }
                 
             }
@@ -229,19 +228,6 @@ export class Node {
         } else if(e.button === 2) {
             if(this.nodeType !== NodeType.OUTPUT) stateManager.interactionMode.set(InteractionMode.CONNECTING);
 
-            stateManager.connectingNodeId.set(this.id);
-            switch(this.nodeType) {
-                case NodeType.INPUT: {
-                    stateManager.inputNodeId.set(this.id);
-                    break;
-                } case NodeType.NODE: {
-                    stateManager.inputNodeId.set(this.inputNodeId);
-                    break;
-                }
-            }
-
-            stateManager.lastNodeId.set(this.id);
-            stateManager.currentNodeId.set(this.id);
             stateManager.selectedWorldObject.set({
                 id: this.id,
                 type: WorldObject.NODE
@@ -257,23 +243,30 @@ export class Node {
         if(this.isFixed) return;
         if(!this.isDragging) return;
 
-        const dx = e.clientX - this.lastMousePosition.x;
-        const dy = e.clientY - this.lastMousePosition.y;
+        this.element.style.visibility = "visible";
+
+        const mousePosition = this.camera.screenToWorldCoords(e.clientX, e.clientY);
+        const dx = mousePosition.x - this.lastMousePosition.x;
+        const dy = mousePosition.y - this.lastMousePosition.y;
 
         this.position.x += dx;
         this.position.y += dy;
-        this.lastMousePosition = { x: e.clientX, y: e.clientY };
+        this.lastMousePosition = { x: mousePosition.x, y: mousePosition.y };
 
         this.move();
     }
 
     onMouseUp(e) {
+        // TODO: Remove:
+        if(this.isBlocked) return;
+
         if(e.button === 0) {
             if(this.isDragging) {
                 stateManager.setDefaultInteractionState();
             } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && !this.isComponentNode) {
                 this.logicState.set(stateNeg(this.logicState));
                 stateManager.recalcualteResistanceTrigger.signal();
+                stateManager.interactionTrigger.signal();
             }
             
             this.element.classList.remove("animate");

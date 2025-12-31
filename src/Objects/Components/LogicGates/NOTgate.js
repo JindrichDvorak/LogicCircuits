@@ -37,6 +37,8 @@ export class NOTgate extends Component {
             this.inState
         );
         this.outNode.logicState.subscribe(() => this.outNode.onLogicStateChange());
+
+        this.setupOutputState();
     }
 
     componentLogic(inState) {

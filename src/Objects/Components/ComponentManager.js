@@ -14,14 +14,12 @@ import { HalfAdder } from "./Circuits/HalfAdder";
 import { FullAdder } from "./Circuits/FullAdder";
 import { ComponentType } from "./Component";
 import { stateManager } from "../../State/StateManager";
+import { getRandomNumberId } from "../../utils";
 
 
-/* TODO:
-    ! Set width and height as variables.
-*/
 export class ComponentManager {
-    constructor(world, nodeManager) {
-        this.world = world;
+    constructor(camera, nodeManager) {
+        this.camera = camera;
         this.nodeManager = nodeManager;
 
         this.components = [];
@@ -29,143 +27,254 @@ export class ComponentManager {
         this.groundCount = 0;
         this.transistorCount = 0;
 
-        this.componentCounter = 0;
+        this.manualInteraction = false;
     }
 
     createTextField(x, y, mouseX, mouseY) {
-        const component = new TextField(this.world, ComponentType.TEXT_FIELD, this.componentCounter, x - 35 / 2, y - 15 / 2, 35, 15);
+        const width = 35;
+        const height = 15;
+        let component;
+        if(this.manualInteraction) {
+            component = new TextField(this.camera, ComponentType.TEXT_FIELD, getRandomNumberId(), x - width / 2, y - height / 2, width, height);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new TextField(this.camera, ComponentType.TEXT_FIELD, getRandomNumberId(), x, y, width, height);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createTransistor(x, y, mouseX, mouseY) {
-        const component = new Transistor(this.world, ComponentType.TRANSISTOR, this.componentCounter, x - 100 / 2, y - 100 / 2, 100, 100, this.nodeManager);
+        const width = 100;
+        const height = 100;
+        let component;
+        if(this.manualInteraction) {
+            component = new Transistor(this.camera, ComponentType.TRANSISTOR, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new Transistor(this.camera, ComponentType.TRANSISTOR, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
 
         this.transistorCount++;
         stateManager.transistorPresent.set(true);
+
+        return component;
     }
 
     createResistor(x, y, mouseX, mouseY) {
-        const component = new Resistor(this.world, ComponentType.RESISTOR, this.componentCounter, x - 20 / 2, y - 100 / 2, 20, 100, this.nodeManager);
+        const width = 20;
+        const height = 100;
+        let component;
+        if(this.manualInteraction) {
+            component = new Resistor(this.camera, ComponentType.RESISTOR, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new Resistor(this.camera, ComponentType.RESISTOR, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
 
         this.resistorCount++;
         stateManager.resistorPresent.set(true);
+
+        return component;
     }
 
-    // TODO: Fix componentType:
     createGround(x, y, mouseX, mouseY) {
-        const component = new Ground(this.world, ComponentType.GROUND, this.componentCounter, x - 60 / 2, y - 40 / 2, 60, 40, this.nodeManager);
+        const width = 60;
+        const height = 40;
+        let component;
+        if(this.manualInteraction) {
+            component = new Ground(this.camera, ComponentType.GROUND, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new Ground(this.camera, ComponentType.GROUND, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
 
         this.groundCount++;
         stateManager.groundPresent.set(true);
+
+        return component;
     }
 
     createBuffer(x, y, mouseX, mouseY) {
-        const component = new BufferGate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new BufferGate(this.camera, ComponentType.BUFFER_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new BufferGate(this.camera, ComponentType.BUFFER_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createNOT(x, y, mouseX, mouseY) {
-        const component = new NOTgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new NOTgate(this.camera, ComponentType.NOT_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new NOTgate(this.camera, ComponentType.NOT_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createAND(x, y, mouseX, mouseY) {
-        const component = new ANDgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new ANDgate(this.camera, ComponentType.AND_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new ANDgate(this.camera, ComponentType.AND_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createNAND(x, y, mouseX, mouseY) {
-        const component = new NANDgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new NANDgate(this.camera, ComponentType.NAND_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new NANDgate(this.camera, ComponentType.NAND_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createOR(x, y, mouseX, mouseY) {
-        const component = new ORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new ORgate(this.camera, ComponentType.OR_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new ORgate(this.camera, ComponentType.OR_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createNOR(x, y, mouseX, mouseY) {
-        const component = new NORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new NORgate(this.camera, ComponentType.NOR_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new NORgate(this.camera, ComponentType.NOR_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createXOR(x, y, mouseX, mouseY) {
-        const component = new XORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new XORgate(this.camera, ComponentType.XOR_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new XORgate(this.camera, ComponentType.XOR_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createNXOR(x, y, mouseX, mouseY) {
-        const component = new NXORgate(this.world, ComponentType.GATE, this.componentCounter, x - 100 / 2, y - 60 / 2, 100, 60, this.nodeManager);
+        const width = 100;
+        const height = 60;
+        let component;
+        if(this.manualInteraction) {
+            component = new NXORgate(this.camera, ComponentType.NXOR_GATE, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new NXORgate(this.camera, ComponentType.NXOR_GATE, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createHalfAdder(x, y, mouseX, mouseY) {
-        const component = new HalfAdder(this.world, ComponentType.CIRCUIT, this.componentCounter, x - 140 / 2, y - 80 / 2, 140, 80, this.nodeManager);
+        const width = 140;
+        const height = 80;
+        let component;
+        if(this.manualInteraction) {
+            component = new HalfAdder(this.camera, ComponentType.HALF_ADDER_CIRCUIT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new HalfAdder(this.camera, ComponentType.HALF_ADDER_CIRCUIT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     createFullAdder(x, y, mouseX, mouseY) {
-        const component = new FullAdder(this.world, ComponentType.CIRCUIT, this.componentCounter, x - 140 / 2, y - 120 / 2, 140, 120, this.nodeManager);
+        const width = 140;
+        const height = 120;
+        let component;
+        if(this.manualInteraction) {
+            component = new FullAdder(this.camera, ComponentType.FULL_ADDER_CIRCUIT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new FullAdder(this.camera, ComponentType.FULL_ADDER_CIRCUIT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
         component.lastMousePosition = { x: mouseX, y: mouseY };
-        component.isDragging = true;
-
         this.components.push(component);
-        this.componentCounter++;
+
+        return component;
     }
 
     getComponentById(componentId) {
@@ -210,5 +319,13 @@ export class ComponentManager {
     deleteComponentById(componentId) {
         const component = this.getComponentById(componentId);
         this.deleteComponent(component);
+    }
+
+    clearAllComponents() {
+        const components = [...this.components];
+        components.forEach((component) => {
+            if(component.componentType === ComponentType.TEXT_FIELD) component.editable = false;
+            this.deleteComponent(component);
+        });
     }
 }

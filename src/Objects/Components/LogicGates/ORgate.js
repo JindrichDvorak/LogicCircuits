@@ -46,6 +46,8 @@ export class ORgate extends Component {
             this.bState
         );
         this.outNode.logicState.subscribe(() => this.outNode.onLogicStateChange());
+
+        this.setupOutputState();
     }
 
     componentLogic(aState, bState) {

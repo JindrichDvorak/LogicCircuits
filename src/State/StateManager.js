@@ -21,12 +21,7 @@ class StateManager {
             type: undefined
         });
 
-        // * Node connection state:
-        this.inputNodeId = state(-1);
-        this.connectingNodeId = state(-1);
-        this.lastNodeId = state(-1);
-        this.currentNodeId = state(-1);
-        this.outputNodeId = state(-1);
+        this.cameraZoom = 1;
 
         // * Circuit state:
         this.resistorPresent = state(false);
@@ -49,13 +44,10 @@ class StateManager {
             id: -1,
             type: undefined
         });
+    }
 
-        // * Node connection state:
-        this.inputNodeId = state(-1);
-        this.connectingNodeId = state(-1);
-        this.lastNodeId = state(-1);
-        this.currentNodeId = state(-1);
-        this.outputNodeId = state(-1);
+    getMousePosition(e) {
+        return { x: e.clientX * this.cameraZoom, y: e.clientY * this.cameraZoom };
     }
 }
 

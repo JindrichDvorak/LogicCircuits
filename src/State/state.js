@@ -1,6 +1,7 @@
 export function state(initialValue) {
     let value = initialValue;
     const reactions = new Set();
+    let allowSignal = true;
 
     function get() {
         return value;
@@ -11,7 +12,7 @@ export function state(initialValue) {
     }
 
     function set(newValue) {
-        if(value !== newValue) {
+        if(value !== newValue && allowSignal) {
             value = newValue;
             signal(value);
         }

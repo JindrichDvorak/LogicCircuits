@@ -10,11 +10,18 @@
   </head>
 
   <body id="body" style="position: relative; height: 90vh; min-height: 600px;">
-    <div id="header" style="height: 25px; border: solid 1px; text-align: center;">
-      Logic Circuits
+    <div id="header" style="height: 25px; border: solid 1px; display: flex;">
+      <div id="fileNameInput" style="flex-grow: 1; text-align: center; align-content: center;" 
+        contenteditable="true" spellcheck="false">Logic circuit</div>
+      <div style="width: fit-content; display: flex;">
+        <button id="saveButton" style="width: fit-content;">Save</button>
+        <button id="loadButton" style="width: fit-content;">Load</button>
+        <input id="fileInput" type="file" accept=".json" hidden>
+        <button id="clearButton" style="width: fit-content; background: crimson;">Clear</button>
+      </div>
     </div>
     <div style="display: flex; flex-direction: row; height: 95%;">
-      <div id="controls" style="width: 500px; border: solid 1px;">
+      <div id="controls" style="width: min-content; border: solid 1px;">
         <button id="newInput" style="width: 100%;">New input</button>
         <button id="newOutput" style="width: 100%;">New output</button>
         <button id="newTextField" style="width: 100%;">New text</button>
@@ -50,7 +57,7 @@
       <!-- * Camera and rendering -->
       <div id="scene" style="position: relative; flex-grow: 1; overflow: hidden; 
         border: solid 1px;">
-        <div id="world" style="position: relative;"></div>
+        <div id="world" style="position: absolute;"></div>
       </div>
       <!-- TODO: Debug UI -->
       <div id="debugUI"></div>

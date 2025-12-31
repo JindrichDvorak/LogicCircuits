@@ -58,6 +58,8 @@ export class HalfAdder extends Component {
             this.bState
         );
         this.cNode.logicState.subscribe(() => this.cNode.onLogicStateChange());
+
+        this.setupOutputState();
     }
 
     componentLogicS(aState, bState) {

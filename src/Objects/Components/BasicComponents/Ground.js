@@ -21,7 +21,6 @@ export class Ground extends Component {
 
         this.inNode = nodeManager.createOutputNode(this.size.width / 2 - nodeOffset, 0, 0, 0, true);
         this.nodes.push(this.inNode);
-        this.inNode.isGlobalOutput = true;
         this.inNode.isGrounded = true;
     }
 }

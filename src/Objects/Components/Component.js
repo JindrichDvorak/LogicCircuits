@@ -1,5 +1,4 @@
 import { WorldObject, InteractionMode, stateManager } from "../../State/StateManager";
-import { state } from "../../State/state";
 
 
 export const ComponentType = Object.freeze({
@@ -7,13 +6,22 @@ export const ComponentType = Object.freeze({
     TRANSISTOR: "Transistor",
     RESISTOR: "Resistor",
     GROUND: "Ground",
-    GATE: "Gate",
-    CIRCUIT: "Circuit"
+    BUFFER_GATE: "Buffer",
+    NOT_GATE: "NOT",
+    AND_GATE: "AND",
+    OR_GATE: "OR",
+    XOR_GATE: "XOR",
+    NAND_GATE: "NAND",
+    NOR_GATE: "NOR",
+    NXOR_GATE: "NXOR",
+    HALF_ADDER_CIRCUIT: "Half adder",
+    FULL_ADDER_CIRCUIT: "Full adder"
 });
 
 export class Component {
-    constructor(world, componentType, idNum, x, y, width, height) {
-        this.world = world;
+    constructor(camera, componentType, idNum, x, y, width, height) {
+        this.camera = camera;
+        this.world = camera.world;
         this.componentType = componentType;
         const id = `${componentType}-${idNum}`;
         this.id = id;
@@ -62,6 +70,10 @@ export class Component {
         });
     }
 
+    setupOutputState() {
+        this.nodes.forEach((node) => node.logicState.signal());
+    }
+
     //Events:
     registerEvents() {
         this.element.addEventListener("mousedown", (e) => this.onMouseDown(e));
@@ -85,7 +97,8 @@ export class Component {
                 this.isDragging = true;
             }, this.holdTime);
 
-            this.lastMousePosition = { x: e.clientX, y: e.clientY };
+            const mousePosition = this.camera.screenToWorldCoords(e.clientX, e.clientY);
+            this.lastMousePosition = { x: mousePosition.x, y: mousePosition.y };
 
             stateManager.selectedWorldObject.set({
                 id: this.id,
@@ -107,12 +120,15 @@ export class Component {
         if(this.isFixed) return;
         if(!this.isDragging) return;
 
-        const dx = e.clientX - this.lastMousePosition.x;
-        const dy = e.clientY - this.lastMousePosition.y;
+        this.element.style.visibility = "visible";
+
+        const mousePosition = this.camera.screenToWorldCoords(e.clientX, e.clientY);
+        const dx = mousePosition.x - this.lastMousePosition.x;
+        const dy = mousePosition.y - this.lastMousePosition.y;
 
         this.position.x += dx;
         this.position.y += dy;
-        this.lastMousePosition = { x: e.clientX, y: e.clientY };
+        this.lastMousePosition = { x: mousePosition.x, y: mousePosition.y };
 
         this.move();
     }

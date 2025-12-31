@@ -10,6 +10,7 @@ export class Camera {
 
         const sceneRect = this.scene.getBoundingClientRect();
         this.scenePosition = { x: sceneRect.left, y: sceneRect.top };
+        this.worldPosition = { x: this.scenePosition.x, y: this.scenePosition.y };
 
         this.registerEvents();
         this.transformWorld();
@@ -43,7 +44,7 @@ export class Camera {
         window.addEventListener("mousemove", (e) => this.onMouseMove(e));
         window.addEventListener("mouseup", (e) => this.onMouseUp(e));
 
-        this.world.addEventListener("wheel", (e) => this.onMouseWheel(e));
+        this.scene.addEventListener("wheel", (e) => this.onMouseWheel(e));
     }
 
     onMouseDown(e) {
@@ -73,6 +74,25 @@ export class Camera {
     }
 
     onMouseWheel(e) {
-        // ! TBD
+        const zoomFactor = 1.05;
+        const oldZoom = this.zoom;
+
+        const mousePosition = { x: e.clientX, y: e.clientY };
+        const oldPosition = this.screenToWorldCoords(mousePosition.x, mousePosition.y);
+
+        if (e.deltaY < 0) {
+            this.zoom *= zoomFactor;
+        } else {
+            this.zoom /= zoomFactor;
+        }
+
+        this.zoom = Math.min(Math.max(this.zoom, 0.2), 5);
+
+        this.position.x -= oldPosition.x * oldZoom - oldPosition.x * this.zoom;
+        this.position.y -= oldPosition.y * oldZoom - oldPosition.y * this.zoom;
+
+        this.transformWorld();
+
+        e.preventDefault()
     }
 }
