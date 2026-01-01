@@ -11,8 +11,8 @@ export class Application {
         this.world = document.getElementById("world");
         this.scene = document.getElementById("scene");
 
-        this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
-        //this.camera = new Camera(this.world, this.scene, 0, 0, 1);
+        //this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
+        this.camera = new Camera(this.world, this.scene, 0, 0, 1);
         this.nodeManager = new NodeManager(this.camera);
         this.componentManager = new ComponentManager(this.camera, this.nodeManager);
 
@@ -42,8 +42,6 @@ export class Application {
                 this.nodeManager.manualInteraction = true;
                 this.nodeManager.createNode(coords.x, coords.y);
                 this.nodeManager.manualInteraction = false;
-            } else {
-                stateManager.setDefaultInteractionState();
             }
         } else if(e.button === 2) {
             stateManager.setDefaultInteractionState();
@@ -70,6 +68,11 @@ export class Application {
             }
 
             stateManager.setDefaultInteractionState();
+        } else if(e.key === "r") {
+            if(stateManager.selectedWorldObject.get().type === WorldObject.COMPONENT) {
+                const component = this.componentManager.getComponentById(stateManager.selectedWorldObject.get().id);
+                component.rotate();
+            }
         }
     }
 }

@@ -85,8 +85,10 @@ export class SaveManager {
                     componentObjectString = this.removeExcesIndent`
                         {
                             "componentType": "${component.componentType}",
+                            "id": "${component.id}",
                             "x": ${component.position.x},
                             "y": ${component.position.y},
+                            "angle": ${component.angle},
                             "text": "${component.text}"
                         }
                     `;
@@ -102,8 +104,10 @@ export class SaveManager {
                     componentObjectString = this.removeExcesIndent`
                         {
                             "componentType": "${component.componentType}",
+                            "id": "${component.id}",
                             "x": ${component.position.x},
                             "y": ${component.position.y},
+                            "angle": ${component.angle},
                             "nodeIds": [
                                 ${nodeIdString}
                             ]
@@ -266,13 +270,23 @@ export class SaveManager {
         for(let i = 0; i < component.nodes.length; i++) {
             component.nodes[i].id = componentObject.nodeIds[i];
         }
+        component.id = componentObject.id;
 
         component.move();
     }
 
+    rotateComponent(component, angle) {
+        const rotationCount = Math.floor(angle / 90);
+        for(let i = 0; i < rotationCount; i++) {
+            component.rotate();
+        }
+    }
+
     clearWorld() {
+        stateManager.clearWorld = true;
         this.componentManager.clearAllComponents();
         this.nodeManager.clearAllNodes();
+        stateManager.clearWorld = false;
     }
 
     openLoadDialog() {
@@ -357,6 +371,7 @@ export class SaveManager {
                 }
             }
             this.setupComponent(component, componentObject);
+            this.rotateComponent(component, componentObject.angle);
         });
     }
 
@@ -436,8 +451,13 @@ export class SaveManager {
             if(childNodes.length !== 0) this.linkNodes(inputNodeObject, childNodes);
         });
 
+        this.nodeManager.inputNodes.forEach((inputNode) => {
+            if(!(inputNode.isResistorNode || inputNode.isTransistorNode)) this.nodeManager.setConnectedToRTL(inputNode);
+        });
+
+        this.nodeManager.setupNodePaths();
+
         stateManager.setDefaultInteractionState();
-        //this.nodeManager.setupNodePaths();
     }
 
     load() {
@@ -459,5 +479,7 @@ export class SaveManager {
         this.loadNodes();
 
         this.connectWires();
+
+        this.componentManager.components.forEach((component) => component.setupOutputState());
     }
 }

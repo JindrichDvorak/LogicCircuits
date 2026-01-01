@@ -39,6 +39,7 @@ export class BufferGate extends Component {
         this.outNode.logicState.subscribe(() => this.outNode.onLogicStateChange());
 
         this.setupOutputState();
+        this.setNodeComponentId(this.id);
     }
 
     componentLogic(inState) {

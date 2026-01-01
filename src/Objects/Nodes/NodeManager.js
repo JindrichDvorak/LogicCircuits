@@ -35,10 +35,8 @@ export class NodeManager {
 
         stateManager.connectOutputTrigger.subscribe((id) => this.connectOutputNode(id));
         stateManager.recalcualteResistanceTrigger.subscribe(() => {
-            if(stateManager.transistorPresent.get()) {
-                this.manualInteraction = true;
+            if(stateManager.transistorPresent.get() && !stateManager.clearWorld) {
                 this.setupNodePaths();
-                this.manualInteraction = false;
             }
         });
     }
@@ -95,6 +93,7 @@ export class NodeManager {
                 type: WorldObject.NODE
             });
             node.lastMousePosition = { x: mouseX, y: mouseY };
+            node.logicState.allowSignal = true;
 
             if(this.manualInteraction) node.element.style.visibility = "hidden";
 
@@ -122,6 +121,7 @@ export class NodeManager {
         node.parentNodeId = stateManager.selectedWorldObject.get().id;
         const parentNode = this.getNodeById(node.parentNodeId);
         parentNode.addChildNode(node.id);
+        node.componentId = parentNode.componentId;
 
         if(parentNode.inputNodeId === -1) {
             node.inputNodeId = parentNode.id;
@@ -153,6 +153,7 @@ export class NodeManager {
         } else {
             node = new Node(this.camera, id, NodeType.OUTPUT, x, y, this.outputNodeWidth, this.outputNodeHeight, isComponentNode);
         }
+        node.element.classList.add("output");
         this.outputNodes.push(node);
         node.logicState.allowSignal = true;
 
@@ -179,6 +180,26 @@ export class NodeManager {
         const outputNode = this.getNodeById(outputNodeId);
         const node = this.getNodeById(stateManager.selectedWorldObject.get().id);
 
+        let inputNodeId;
+        if(node.inputNodeId === -1) {
+            inputNodeId = node.id;
+        } else {
+            inputNodeId = node.inputNodeId;
+        }
+        const inputNode = this.getNodeById(inputNodeId);
+
+        if(outputNode.isComponentNode) {
+            if(outputNode.componentId === node.componentId) {
+                stateManager.interactionMode.set(InteractionMode.NORMAL);
+                stateManager.selectedWorldObject.set({
+                    id: outputNodeId,
+                    type: WorldObject.NODE
+                });
+
+                return;
+            }
+        }
+
         node.addChildNode(outputNodeId)
         const wire = new Wire(outputNode, node, this.wireHolder);
         outputNode.wires.push(wire);
@@ -187,19 +208,13 @@ export class NodeManager {
         outputNode.connectLogicStates(node.logicState);
         node.logicState.signal();
 
-        let inputNodeId;
-        if(node.inputNodeId === -1) {
-            inputNodeId = node.id;
-        } else {
-            inputNodeId = node.inputNodeId;
-        }
-
-        const inputNode = this.getNodeById(inputNodeId);
         if(outputNode.isTransistorNode || outputNode.isResistorNode) {
             this.propagateInputNodeId(outputNode, inputNodeId);
         } else {
             outputNode.inputNodeId = inputNodeId;
             inputNode.outputNodeIds.push(outputNodeId);
+
+            this.setConnectedToRTL(inputNode);
         }
 
         stateManager.interactionMode.set(InteractionMode.NORMAL);
@@ -211,11 +226,27 @@ export class NodeManager {
         this.setupNodePaths();
     }
 
+    setConnectedToRTL(inputNode) {
+        this.propagateInputNodeId(inputNode, -2);
+        if(inputNode.foundRTL) inputNode.connectedToRTL = true;
+        else inputNode.connectedToRTL = false;
+        inputNode.foundRTL = false;
+    }
+
+    /* * inputNodeId:
+            * -1 --> disconnect relevant output nodes from input.
+            * -2 --> check whether or not the input node is connected to RTL elements.
+    */      
     propagateInputNodeId(currentNode, inputNodeId) {
         let nextNode;
         if(currentNode.nodeType === NodeType.OUTPUT && (currentNode.isTransistorNode || currentNode.isResistorNode)) {
             nextNode = this.getNodeById(currentNode.componentChildNodeId);
-            nextNode.inputNodeId = inputNodeId;
+            if(inputNodeId === -2) {
+                const inputNode = this.getNodeById(nextNode.inputNodeId);
+                inputNode.foundRTL = true;
+            } else {
+                nextNode.inputNodeId = inputNodeId;
+            }
             this.propagateInputNodeId(nextNode, inputNodeId);
         } else if(currentNode.nodeType === NodeType.INPUT || currentNode.nodeType === NodeType.NODE) {
             currentNode.childNodeIds.forEach((childNodeId) => {
@@ -226,9 +257,14 @@ export class NodeManager {
             const outputNodeId = currentNode.id;
             let inputNode;
             if(inputNodeId === -1) {
-                inputNode = this.getNodeById(currentNode.inputNodeId);;
+                inputNode = this.getNodeById(currentNode.inputNodeId);
                 if(inputNode.outputNodeIds.includes(outputNodeId)) {
                     inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNodeId), 1);
+                }
+            } else if(inputNodeId === -2) {
+                if(currentNode.isGrounded) {
+                    inputNode = this.getNodeById(currentNode.inputNodeId);
+                    inputNode.foundRTL = true;
                 }
             } else {
                 inputNode = this.getNodeById(inputNodeId);
@@ -237,7 +273,7 @@ export class NodeManager {
                 }
             }
         }
-        currentNode.inputNodeId = inputNodeId;
+        if(inputNodeId !== -2) currentNode.inputNodeId = inputNodeId;
     }
 
     getPrecedingNode(node) {
@@ -313,28 +349,27 @@ export class NodeManager {
     }
 
     setupNodePaths() {
-        this.inputNodes.forEach((node) => node.logicState.allowSignal = true);
+        this.inputNodes.forEach((node) => {
+            node.logicState.allowSignal = true;
+        });
         this.nodes.forEach((node) => node.logicState.allowSignal = true);
         this.outputNodes.forEach((node) => node.logicState.allowSignal = true);
 
-        if(!this.manualInteraction || this.manualInteraction) {
-            this.inputNodes.forEach((node) => {
-                if(!node.isComponentNode) {
-                    node.logicState.set(stateNeg(node.logicState));
-                    node.logicState.set(stateNeg(node.logicState));
-                    //node.logicState.set(0);
-                }
-            });
-        }
+        this.inputNodes.forEach((node) => {
+            if(!node.isComponentNode && node.connectedToRTL) {
+                node.logicState.set(stateNeg(node.logicState));
+                node.logicState.set(stateNeg(node.logicState));
+            }
+        });
     
         this.inputNodes.forEach((inputNode) => {
-            if(!(inputNode.isResistorNode || inputNode.isTransistorNode)) {
+            if(!(inputNode.isResistorNode || inputNode.isTransistorNode) && inputNode.connectedToRTL) {
                 this.calculatePathResistance(inputNode);
             }
         });
 
         this.inputNodes.forEach((node) => {
-            if(!node.isComponentNode) {
+            if(!node.isComponentNode && node.connectedToRTL) {
                 node.logicState.set(stateNeg(node.logicState));
                 node.logicState.set(stateNeg(node.logicState));
             }
@@ -384,16 +419,15 @@ export class NodeManager {
             inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNode.id), 1);
         }
 
+        if(!stateManager.clearWorld) this.setupNodePaths();
         this.deleteNode(outputNode);
-        this.setupNodePaths();
     }
 
     disconnectOutputNode(outputNode) {        
-        let inputNode;
+        const inputNode = this.getNodeById(outputNode.inputNodeId);
         if(outputNode.isTransistorNode || outputNode.isResistorNode) {
-            this.propagateInputNodeId(outputNode, -1);
+            if(inputNode.outputNodeIds.includes(outputNode.id)) this.propagateInputNodeId(outputNode, -1);
         } else {
-            inputNode = this.getNodeById(outputNode.inputNodeId);
             if(inputNode) inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNode.id), 1);
             outputNode.inputNodeId = -1;
         }

@@ -1,3 +1,11 @@
+html, body {
+    height:100vh;
+    max-height:100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 #world {
     transform-origin: 0 0;
     will-change: transform;
@@ -15,15 +23,15 @@
 }
 
 .component {
-    //transform: none;
     user-select: none;
 
     position: absolute;
 }
 
 .component:hover {
-    border: solid 1px gold;
+    border: solid 2px orange;
     background: white;
+    translate: -2px -2px;
 }
 
 @property --c-angle {
@@ -32,7 +40,7 @@
     inherits: false;
 }
 
-.component.animate::after {
+.component.animate {
     content: "";
     position: absolute;
     width: 100%;
@@ -41,7 +49,7 @@
     top: 50%;
     translate: -50% -50%;
     padding: 5px;
-    background-image: conic-gradient(orange var(--c-angle), transparent 0deg);
+    background-image: conic-gradient(black var(--c-angle), transparent 0deg);
     animation: 0.5s c-load linear forwards;
     z-index: -1;
 }
@@ -55,7 +63,6 @@
 }
 
 .node {
-    //transform: none;
     user-select: none;
 
     position: absolute;
@@ -65,9 +72,41 @@
     border: solid 1px black;
 }
 
-.node:hover {
-    border: solid 1px gold;
+.node.output {
+    border: dashed 1px black;
 }
+
+.node:hover {
+    border: solid 2px orange;
+    translate: -1px -1px;
+}
+
+.node.output:hover {
+    border: dashed 2px orange;
+    translate: -1px -1px;
+}
+
+/*@property --rotateAngle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.node.input {
+    border: dashed 2px black;
+    transform: rotate(var(--rotateAngle));
+    animation: 1.5s spin infinite linear;
+
+    z-index: 1;
+}
+
+@keyframes spin {
+    from {
+        --rotateAngle: 0deg;
+    } to {
+        --rotateAngle: 360deg;
+    }
+}*/
 
 @property --n-angle {
     syntax: "<angle>";
@@ -75,7 +114,7 @@
     inherits: false;
 }
 
-.node.animate::before {
+.node.animate::after {
     content: "";
     position: absolute;
     width: 100%;
@@ -85,7 +124,7 @@
     padding: 5px;
     translate: -50% -50%;
     border-radius: 50%;
-    background-image: conic-gradient(orange var(--n-angle), transparent 0deg);
+    background-image: conic-gradient(black var(--n-angle), transparent 0deg);
     animation: 0.5s n-load linear forwards;
     z-index: -1;
 }
@@ -96,6 +135,17 @@
     } to {
         --n-angle: 360deg;
     }
+}
+
+.interactionInfo {
+    position: absolute;
+    border: solid 1px;
+    width: auto;
+    height: auto;
+    right: 0px;
+    bottom: 0px;
+    background: white;
+    padding: 5px;
 }
 
 .debugUI {

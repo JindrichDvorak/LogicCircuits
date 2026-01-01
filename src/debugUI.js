@@ -41,7 +41,9 @@ export function debugUILogic(nodeManager) {
                     <ul>
                         <li>Parent: ${selectedNode.parentNodeId}</li>
                         <li>Input: ${selectedNode.inputNodeId}</li>
+                        <li>Component: ${selectedNode.componentId}</li>
                         <li>Logic state: ${selectedNode.logicState.get()}</li>
+                        <li>Connected to RTL: ${selectedNode.connectedToRTL}</li>
                         <li>Is open: ${selectedNode.logicState.allowSignal}</li>
                         <li>Resistance: ${selectedNode.resistorCount}</li>
                         <li>Child nodes:</li>

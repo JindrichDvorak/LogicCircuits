@@ -48,7 +48,7 @@ export class Camera {
     }
 
     onMouseDown(e) {
-        if(e.button === 1) {
+        if(e.button === 2) {
             this.isDragging = true;
             this.lastMousePosition = { x: e.clientX, y: e.clientY };
         }
@@ -68,13 +68,13 @@ export class Camera {
     }
 
     onMouseUp(e) {
-        if(e.button === 1) {
+        if(e.button === 2) {
             this.isDragging = false;
         }
     }
 
     onMouseWheel(e) {
-        const zoomFactor = 1.05;
+        const zoomFactor = 1.1;
         const oldZoom = this.zoom;
 
         const mousePosition = { x: e.clientX, y: e.clientY };
@@ -86,7 +86,7 @@ export class Camera {
             this.zoom /= zoomFactor;
         }
 
-        this.zoom = Math.min(Math.max(this.zoom, 0.2), 5);
+        this.zoom = Math.min(Math.max(this.zoom, 0.4), 5);
 
         this.position.x -= oldPosition.x * oldZoom - oldPosition.x * this.zoom;
         this.position.y -= oldPosition.y * oldZoom - oldPosition.y * this.zoom;

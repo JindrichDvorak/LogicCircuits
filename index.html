@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
 
-  <body id="body" style="position: relative; height: 90vh; min-height: 600px;">
-    <div id="header" style="height: 25px; border: solid 1px; display: flex;">
+  <body id="body" style="position: relative">
+    <div id="header" style="height: 30px; border: solid 1px; display: flex;">
       <div id="fileNameInput" style="flex-grow: 1; text-align: center; align-content: center;" 
         contenteditable="true" spellcheck="false">Logic circuit</div>
       <div style="width: fit-content; display: flex;">
@@ -20,7 +20,7 @@
         <button id="clearButton" style="width: fit-content; background: crimson;">Clear</button>
       </div>
     </div>
-    <div style="display: flex; flex-direction: row; height: 95%;">
+    <div style="display: flex; flex-direction: row; height: calc(100vh - 32px);">
       <div id="controls" style="width: min-content; border: solid 1px;">
         <button id="newInput" style="width: 100%;">New input</button>
         <button id="newOutput" style="width: 100%;">New output</button>
@@ -59,7 +59,9 @@
         border: solid 1px;">
         <div id="world" style="position: absolute;"></div>
       </div>
-      <!-- TODO: Debug UI -->
+      <!-- * Camera and rendering -->
+      <div id="interactionInfo">Test</div>
+      <!-- TODO: Remove Debug UI -->
       <div id="debugUI"></div>
     </div>
     

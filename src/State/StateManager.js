@@ -5,7 +5,8 @@ export const InteractionMode = Object.freeze({
     NORMAL: "Normal",
     DRAGGING: "Dragging",
     CONNECTING: "Connecting",
-    CREATING_NODE: "Creating node"
+    CREATING_NODE: "Creating node",
+    ERROR: "Error"
 });
 
 export const WorldObject = Object.freeze({
@@ -20,8 +21,9 @@ class StateManager {
             id: -1,
             type: undefined
         });
+        this.errorMessage = "";
 
-        this.cameraZoom = 1;
+        this.clearWorld = false;
 
         // * Circuit state:
         this.resistorPresent = state(false);
@@ -44,10 +46,7 @@ class StateManager {
             id: -1,
             type: undefined
         });
-    }
-
-    getMousePosition(e) {
-        return { x: e.clientX * this.cameraZoom, y: e.clientY * this.cameraZoom };
+        this.errorMessage = "";
     }
 }
 

@@ -40,7 +40,7 @@ export class Node {
         this.isDragging = false;
         this.lastMousePosition = { x: 0, y: 0 };
         this.isFixed = false;
-        this.holdTime = 500;
+        this.holdTime = 150;
         this.holdTimer;
         this.mouseLeave = false;
 
@@ -68,13 +68,14 @@ export class Node {
         this.isGrounded = false;
         this.isResistorNode = false;
         this.isTransistorNode = false;
-        
-        this.joints = [];
+        this.foundRTL = false;
+        this.connectedToRTL = false;
 
         // * Component node logic:
         this.isComponentNode = isComponentNode;
         this.relativePosition = { x: 0, y: 0 };
         this.transistorOn = false;
+        this.componentId = -1;
 
         // TODO: Find a better solution:
         // ! After loading, input nodes react to mouseup events originating from world.
@@ -162,19 +163,6 @@ export class Node {
         this.childNodeIds.splice(this.childNodeIds.indexOf(childNodeId), 1);
     }
 
-    sortJoints() {
-        this.joints.sort(function(a, b) {
-            let id1 = a.id;
-            let id2 = b.id;
-            const idNum1 = id1.split("-", 2)[1];
-            const idNum2 = id2.split("-", 2)[1];
-
-            if(idNum1 < idNum2) return -1;
-            if(idNum1 > idNum2) return 1;
-            return 0;
-        });
-    }
-
     //Events:
     registerEvents() {
         this.element.addEventListener("mousedown", (e) => this.onMouseDown(e));
@@ -211,8 +199,7 @@ export class Node {
                 });
 
                 if(!this.isFixed) {
-                    this.element.classList.add("animate");
-
+                    //this.element.classList.add("animate");
                     this.holdTimer = setTimeout(() => {
                         stateManager.interactionMode.set(InteractionMode.DRAGGING);
 
@@ -269,16 +256,18 @@ export class Node {
                 stateManager.interactionTrigger.signal();
             }
             
-            this.element.classList.remove("animate");
+            //this.element.classList.remove("animate");
             this.isDragging = false;
             clearTimeout(this.holdTimer);
+
+            this.isDragging = false;
         }
     }
 
     onMouseLeave(e) {
         clearTimeout(this.holdTimer);
         if(!this.isDragging) {
-            this.element.classList.remove("animate");
+            //this.element.classList.remove("animate");
         }
         this.mouseLeave = true;
     }

@@ -1,6 +1,7 @@
 import { stateManager } from "./State/StateManager"; 
 import { Application } from "./Application";
 import { debugUILogic } from "./debugUI";
+import { interactionInfoLogic } from "./interactionFeedback";
 
 
 const app = new Application();
@@ -188,6 +189,8 @@ newFullAdder.addEventListener("click", (e) => {
   app.componentManager.createFullAdder(coords.x, coords.y, mouseX, mouseY);
   app.componentManager.manualInteraction = false;
 });
+
+interactionInfoLogic(app.nodeManager, app.componentManager);
 
 // TODO: remove:
 //debugUILogic(app.nodeManager);

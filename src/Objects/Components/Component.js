@@ -29,13 +29,14 @@ export class Component {
         // * Interaction:
         this.element;
         this.position = { x: x, y: y };
+        this.angle = 0;
 
         this.size = { width: width, height: height };
 
         this.isDragging = false;
         this.lastMousePosition = { x: 0, y: 0 };
         this.isFixed = false;
-        this.holdTime = 500;
+        this.holdTime = 150;
         this.holdTimer;
         this.mouseLeave = false;
 
@@ -70,8 +71,35 @@ export class Component {
         });
     }
 
+    rotate() {
+        this.angle += 90;
+        if(this.angle === 360) this.angle = 0;
+
+        this.element.style.transform = `rotate(${this.angle}deg)`;
+
+        const centerX = this.size.width / 2;
+        const centerY = this.size.height / 2;
+        let relX;
+        let relY;
+        this.nodes.forEach((node) => {
+            relX = node.relativePosition.x - centerX;
+            relY = node.relativePosition.y - centerY;
+
+            node.relativePosition.x = centerX - relY;
+            node.relativePosition.y = centerY + relX;
+
+            node.moveWithComponent(this.position);
+        });
+    }
+
     setupOutputState() {
+        this.nodes.forEach((node) => node.logicState.allowSignal = true);
+
         this.nodes.forEach((node) => node.logicState.signal());
+    }
+
+    setNodeComponentId(componentId) {
+        this.nodes.forEach((node) => node.componentId = componentId);
     }
 
     //Events:
@@ -89,7 +117,12 @@ export class Component {
         //e.preventDefault();
         this.mouseLeave = false;
         if(e.button === 0) {
-            this.element.classList.add("animate");
+            if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
+                stateManager.setDefaultInteractionState();
+                e.preventDefault();
+            }
+
+            //this.element.classList.add("animate");
 
             this.holdTimer = setTimeout(() => {
                 stateManager.interactionMode.set(InteractionMode.DRAGGING);
@@ -104,6 +137,7 @@ export class Component {
                 id: this.id,
                 type: WorldObject.COMPONENT
             });
+            stateManager.interactionTrigger.signal();
 
             e.stopPropagation();
         } else if(e.button === 2) {
@@ -112,6 +146,7 @@ export class Component {
                 id: this.id,
                 type: WorldObject.COMPONENT
             });
+            stateManager.interactionTrigger.signal();
             e.stopPropagation();
         }
     }
@@ -135,11 +170,7 @@ export class Component {
 
     onMouseUp(e) {
         if(e.button === 0) {
-            if(this.isDragging) {
-                stateManager.setDefaultInteractionState();
-            }
-            
-            this.element.classList.remove("animate");
+            //this.element.classList.remove("animate");
             this.isDragging = false;
             clearTimeout(this.holdTimer);
         }
@@ -148,7 +179,7 @@ export class Component {
     onMouseLeave(e) {
         clearTimeout(this.holdTimer);
         if(!this.isDragging) {
-            this.element.classList.remove("animate");
+            //this.element.classList.remove("animate");
         }
         this.mouseLeave = true;
     }

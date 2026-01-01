@@ -52,8 +52,7 @@ export class Transistor extends Component {
         this.emitterNode.logicState.subscribe(() => this.emitterNode.onLogicStateChange());
 
         this.setupOutputState();
-
-        this.setupOutputState();
+        this.setNodeComponentId(this.id);
     }
 
     componentLogic(baseState, collectorState) {

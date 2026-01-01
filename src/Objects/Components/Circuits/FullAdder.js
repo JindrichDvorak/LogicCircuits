@@ -68,6 +68,7 @@ export class FullAdder extends Component {
         this.cNode.logicState.subscribe(() => this.cNode.onLogicStateChange());
 
         this.setupOutputState();
+        this.setNodeComponentId(this.id);
     }
 
     componentLogicS(aState, bState, cInState) {
