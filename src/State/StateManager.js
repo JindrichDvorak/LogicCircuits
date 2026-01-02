@@ -25,6 +25,8 @@ class StateManager {
 
         this.clearWorld = false;
 
+        this.tempElement;
+
         // * Circuit state:
         this.resistorPresent = state(false);
         this.groundPresent = state(false);

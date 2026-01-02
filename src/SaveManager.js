@@ -94,12 +94,14 @@ export class SaveManager {
                     `;
                 } else {
                     let nodeIdString = component.nodes.map(n => `"${n.id}"`).join(",\n");
+                    let controlStatesString = component.controlStates.map(c => `${c.get()}`).join(",\n");
 
                     const offsetString = `
                         {
                     `;
                     const indent = this.calculateStringIndent(offsetString) + 8;
                     nodeIdString = this.addIndent(nodeIdString, indent);
+                    controlStatesString = this.addIndent(controlStatesString, indent);
 
                     componentObjectString = this.removeExcesIndent`
                         {
@@ -110,6 +112,9 @@ export class SaveManager {
                             "angle": ${component.angle},
                             "nodeIds": [
                                 ${nodeIdString}
+                            ],
+                            "controlStates": [
+                                ${controlStatesString}
                             ]
                         }
                     `;
@@ -129,7 +134,6 @@ export class SaveManager {
 
         let parentNodeString = "";
         let nodes = [];
-        let listName;
         if(nodeType === NodeType.INPUT) {
             this.nodeManager.inputNodes.forEach((node) => {
                 if(node.isComponentNode === isComponentNode) nodes.push(node);
@@ -268,7 +272,12 @@ export class SaveManager {
 
     setupComponent(component, componentObject) {
         for(let i = 0; i < component.nodes.length; i++) {
-            component.nodes[i].id = componentObject.nodeIds[i];
+            const node = component.nodes[i];
+            node.id = componentObject.nodeIds[i];
+            if(node.isManualInputNode) node.isBlocked = true;
+        }
+        for(let i = 0; i < component.controlStates.length; i++) {
+            component.controlStates[i].set(componentObject.controlStates[i]);
         }
         component.id = componentObject.id;
 
@@ -366,6 +375,22 @@ export class SaveManager {
                     break;
                 } case ComponentType.FULL_ADDER_CIRCUIT: {
                     component = this.componentManager.createFullAdder(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.FOUR_BIT_INPUT: {
+                    component = this.componentManager.createFourBitInput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.EIGHT_BIT_INPUT: {
+                    component = this.componentManager.createEightBitInput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.FOUR_BIT_OUTPUT: {
+                    component = this.componentManager.createFourBitOutput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.EIGHT_BIT_OUTPUT: {
+                    component = this.componentManager.createEightBitOutput(componentObject.x, componentObject.y, 0, 0);
 
                     break;
                 }

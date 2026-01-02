@@ -76,10 +76,11 @@ export class Node {
         this.relativePosition = { x: 0, y: 0 };
         this.transistorOn = false;
         this.componentId = -1;
+        this.isManualInputNode = false;
 
         // TODO: Find a better solution:
         // ! After loading, input nodes react to mouseup events originating from world.
-        this.isBlocked = false;
+        this.isBlocked = true;
 
         this.createElement();
         this.registerEvents();
@@ -250,7 +251,7 @@ export class Node {
         if(e.button === 0) {
             if(this.isDragging) {
                 stateManager.setDefaultInteractionState();
-            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && !this.isComponentNode) {
+            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && (!this.isComponentNode || this.isManualInputNode)) {
                 this.logicState.set(stateNeg(this.logicState));
                 stateManager.recalcualteResistanceTrigger.signal();
                 stateManager.interactionTrigger.signal();

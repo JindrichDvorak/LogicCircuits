@@ -11,14 +11,30 @@ export class Application {
         this.world = document.getElementById("world");
         this.scene = document.getElementById("scene");
 
-        //this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
-        this.camera = new Camera(this.world, this.scene, 0, 0, 1);
+        this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
+        //this.camera = new Camera(this.world, this.scene, 0, 0, 1);
         this.nodeManager = new NodeManager(this.camera);
         this.componentManager = new ComponentManager(this.camera, this.nodeManager);
 
         this.saveManager = new SaveManager(this.camera, this.nodeManager, this.componentManager);
 
+        this.createTempElement();
+
         this.registerEvents();
+    }
+
+    createTempElement() {
+        const tempElement = document.createElement("span");
+        tempElement.style.left = "0px";
+        tempElement.style.top = "0px";
+        tempElement.style.visibility = "hidden";
+        tempElement.style.position = "absolute";
+        tempElement.style.margin = "0";
+        tempElement.style.padding = "0";
+        tempElement.style.boxSizing = "border-box";
+        this.world.appendChild(tempElement);
+
+        stateManager.tempElement = tempElement;
     }
 
     registerEvents() {

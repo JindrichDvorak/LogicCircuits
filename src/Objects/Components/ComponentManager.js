@@ -12,9 +12,13 @@ import { XORgate } from "./LogicGates/XORgate";
 import { NXORgate } from "./LogicGates/NXORgate";
 import { HalfAdder } from "./Circuits/HalfAdder";
 import { FullAdder } from "./Circuits/FullAdder";
+import { FourBitInput } from "./Circuits/FourBitInput";
+import { EightBitInput } from "./Circuits/EightBitInput";
 import { ComponentType } from "./Component";
 import { stateManager } from "../../State/StateManager";
 import { getRandomNumberId } from "../../utils";
+import { FourBitOutput } from "./Circuits/FourBitOutput";
+import { EightBitOutput } from "./Circuits/EightBitOutput";
 
 
 export class ComponentManager {
@@ -270,6 +274,80 @@ export class ComponentManager {
             component.element.style.visibility = "hidden";
         } else {
             component = new FullAdder(this.camera, ComponentType.FULL_ADDER_CIRCUIT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createFourBitInput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 77.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new FourBitInput(this.camera, ComponentType.FOUR_BIT_INPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new FourBitInput(this.camera, ComponentType.FOUR_BIT_INPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createEightBitInput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 153.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new EightBitInput(this.camera, ComponentType.EIGHT_BIT_INPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new EightBitInput(this.camera, ComponentType.EIGHT_BIT_INPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createFourBitOutput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 77.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new FourBitOutput(this.camera, ComponentType.FOUR_BIT_OUTPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+
+            component.rotate();
+            component.rotate();
+        } else {
+            component = new FourBitOutput(this.camera, ComponentType.FOUR_BIT_OUTPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createEightBitOutput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 153.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new EightBitOutput(this.camera, ComponentType.EIGHT_BIT_OUTPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+
+            component.rotate();
+            component.rotate();
+        } else {
+            component = new EightBitOutput(this.camera, ComponentType.EIGHT_BIT_OUTPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
         }
         component.lastMousePosition = { x: mouseX, y: mouseY };
         this.components.push(component);

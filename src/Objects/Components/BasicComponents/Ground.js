@@ -17,7 +17,7 @@ export class Ground extends Component {
         const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
         this.element.innerHTML = img;
 
-        const nodeOffset = 1.15;
+        const nodeOffset = 1;
 
         this.inNode = nodeManager.createOutputNode(this.size.width / 2 - nodeOffset, 0, 0, 0, true);
         this.nodes.push(this.inNode);

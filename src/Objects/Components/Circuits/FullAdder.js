@@ -29,23 +29,37 @@ export class FullAdder extends Component {
 
         // TODO: This needs to be size invariant --> remove and replace:
         const nodeOffsetSide = 3;
-        const nodeOffsetTop = 26;
 
-        this.aNode = nodeManager.createOutputNode(this.size.width / 2 - nodeOffsetTop, 0, 0, 0, true);
+        const labelA = document.createElement("div");
+        this.setupLabel(labelA, "A", 40, 22.5);
+
+        this.aNode = nodeManager.createOutputNode(this.size.width / 2 - 26, 0, 0, 0, true);
         this.nodes.push(this.aNode);
         this.aState = this.aNode.logicState;
 
-        this.bNode = nodeManager.createOutputNode(this.size.width / 2 + nodeOffsetTop, 0, 0, 0, true);
+        const labelB = document.createElement("div");
+        this.setupLabel(labelB, "B", 90, 22.5);
+
+        this.bNode = nodeManager.createOutputNode(this.size.width / 2 + 23.5, 0, 0, 0, true);
         this.nodes.push(this.bNode);
         this.bState = this.bNode.logicState;
+
+        const labelCin = document.createElement("div");
+        this.setupLabel(labelCin, "C<sub>i</sub>", 27.5, 47.5);
 
         this.cInNode = nodeManager.createOutputNode(0, this.size.height / 2 - nodeOffsetSide, 0, 0, true);
         this.nodes.push(this.cInNode);
         this.cInState = this.cInNode.logicState;
 
-        this.sNode = nodeManager.createInputNode(this.size.width / 2, this.size.height, 0, 0, true);
+        const labelS = document.createElement("div");
+        this.setupLabel(labelS, "S", 65, 75);
+
+        this.sNode = nodeManager.createInputNode(this.size.width / 2 - 0.5, this.size.height, 0, 0, true);
         this.nodes.push(this.sNode);
         this.sState = this.sNode.logicState;
+
+        const labelCout = document.createElement("div");
+        this.setupLabel(labelCout, "C<sub>o</sub>", 95, 47.5);
 
         this.cNode = nodeManager.createInputNode(this.size.width, this.size.height / 2 - nodeOffsetSide, 0, 0, true);
         this.nodes.push(this.cNode);

@@ -15,7 +15,11 @@ export const ComponentType = Object.freeze({
     NOR_GATE: "NOR",
     NXOR_GATE: "NXOR",
     HALF_ADDER_CIRCUIT: "Half adder",
-    FULL_ADDER_CIRCUIT: "Full adder"
+    FULL_ADDER_CIRCUIT: "Full adder",
+    FOUR_BIT_INPUT: "4-bit input",
+    EIGHT_BIT_INPUT: "8-bit input",
+    FOUR_BIT_OUTPUT: "4-bit output",
+    EIGHT_BIT_OUTPUT: "8-bit output"
 });
 
 export class Component {
@@ -42,6 +46,10 @@ export class Component {
 
         // * Component logic:
         this.nodes = [];
+        this.labels = [];
+        this.controls = [];
+        this.controlStates = [];
+        this.tempElement;
 
         this.createElement();
         this.registerEvents();
@@ -76,6 +84,12 @@ export class Component {
         if(this.angle === 360) this.angle = 0;
 
         this.element.style.transform = `rotate(${this.angle}deg)`;
+        this.labels.forEach((label) => {
+            label.style.transform = `rotate(${-this.angle}deg)`;
+        });
+        this.controls.forEach((control) => {
+            control.style.transform = `rotate(${-this.angle}deg)`;
+        });
 
         const centerX = this.size.width / 2;
         const centerY = this.size.height / 2;
@@ -90,6 +104,34 @@ export class Component {
 
             node.moveWithComponent(this.position);
         });
+    }
+
+    setupLabel(label, innerHTML, x, y) {
+        label.classList.add("label");
+        label.innerHTML = innerHTML;
+        label.style.left = `${x}px`;
+        label.style.top = `${y}px`;
+
+        this.element.appendChild(label);
+        this.labels.push(label);
+    }
+
+    setupControlSwitch(controlSwitch, innerHTML, x, y, onClick, allowRotation = true) {
+        controlSwitch.classList.add("componentButton");
+        controlSwitch.style.left = `${x}px`;
+        controlSwitch.style.top = `${y}px`;
+        controlSwitch.innerHTML = innerHTML;
+        controlSwitch.addEventListener("click", () => onClick());
+
+        this.element.appendChild(controlSwitch);
+        if(allowRotation) this.controls.push(controlSwitch);
+    }
+
+    calculateControlSwitchSize(innerHTML) {
+        const tempElement = stateManager.tempElement;
+        tempElement.innerHTML = innerHTML;
+
+        return length = Math.max(tempElement.offsetWidth, tempElement.offsetHeight);
     }
 
     setupOutputState() {

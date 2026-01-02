@@ -190,7 +190,54 @@ newFullAdder.addEventListener("click", (e) => {
   app.componentManager.manualInteraction = false;
 });
 
+const new4bitInput = document.getElementById("new4bitInput");
+new4bitInput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createFourBitInput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new8bitInput = document.getElementById("new8bitInput");
+new8bitInput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createEightBitInput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new4bitOutput = document.getElementById("new4bitOutput");
+new4bitOutput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createFourBitOutput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new8bitOutput = document.getElementById("new8bitOutput");
+new8bitOutput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createEightBitOutput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
 interactionInfoLogic(app.nodeManager, app.componentManager);
 
 // TODO: remove:
 //debugUILogic(app.nodeManager);
+
+const dataString = `
+
+`;
+
+//app.saveManager.data = await JSON.parse(dataString);
+//app.saveManager.load();

@@ -6,6 +6,11 @@ html, body {
     padding: 0;
 }
 
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 #world {
     transform-origin: 0 0;
     will-change: transform;
@@ -17,8 +22,8 @@ html, body {
     height: 100000px;
     
     background: #ffffff;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.25) 1px, transparent 1px), 
-        linear-gradient(90deg, rgba(0, 0, 0, 0.25) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.15) 2px, transparent 1px), 
+        linear-gradient(90deg, rgba(0, 0, 0, 0.15) 2px, transparent 1px);
     background-size: 25px 25px;
 }
 
@@ -60,6 +65,27 @@ html, body {
     } to {
         --c-angle: 360deg;
     }
+}
+
+.label {
+    user-select: none;
+    position: absolute;
+    width: min-content;
+    height: min-content;
+}
+
+.componentButton {
+    user-select: none;
+    position: absolute;
+    padding: 0;
+    align-content:center;
+    justify-content: center;
+
+    display: flex;
+}
+
+.componentButton:hover {
+    background: orange;
 }
 
 .node {

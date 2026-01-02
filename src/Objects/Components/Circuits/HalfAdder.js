@@ -26,20 +26,32 @@ export class HalfAdder extends Component {
         this.element.innerHTML = img;
 
         // TODO: This needs to be size invariant --> remove and replace:
-        const nodeOffsetTop = 17;
+        const nodeOffsetTop = 18.5;
         const nodeOffsetBot = 23;
+
+        const labelA = document.createElement("div");
+        this.setupLabel(labelA, "A", 30, 10);
 
         this.aNode = nodeManager.createOutputNode(0, nodeOffsetTop, 0, 0, true);
         this.nodes.push(this.aNode);
         this.aState = this.aNode.logicState;
 
+        const labelB = document.createElement("div");
+        this.setupLabel(labelB, "B", 30, 50);
+
         this.bNode = nodeManager.createOutputNode(0, this.size.height - nodeOffsetBot, 0, 0, true);
         this.nodes.push(this.bNode);
         this.bState = this.bNode.logicState;
 
+        const labelC = document.createElement("div");
+        this.setupLabel(labelC, "C", 100, 10);
+
         this.cNode = nodeManager.createInputNode(this.size.width, nodeOffsetTop, 0, 0, true);
         this.nodes.push(this.cNode);
         this.cState = this.cNode.logicState;
+
+        const labelS = document.createElement("div");
+        this.setupLabel(labelS, "S", 100, 50);
 
         this.sNode = nodeManager.createInputNode(this.size.width, this.size.height - nodeOffsetBot, 0, 0, true);
         this.nodes.push(this.sNode);
@@ -95,5 +107,9 @@ export class HalfAdder extends Component {
             result = 1;
         }
         return result;
+    }
+
+    createLabels() {
+
     }
 }

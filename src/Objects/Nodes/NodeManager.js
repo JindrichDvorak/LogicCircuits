@@ -356,7 +356,7 @@ export class NodeManager {
         this.outputNodes.forEach((node) => node.logicState.allowSignal = true);
 
         this.inputNodes.forEach((node) => {
-            if(!node.isComponentNode && node.connectedToRTL) {
+            if((!node.isComponentNode || node.isManualInputNode) && node.connectedToRTL) {
                 node.logicState.set(stateNeg(node.logicState));
                 node.logicState.set(stateNeg(node.logicState));
             }
@@ -369,7 +369,7 @@ export class NodeManager {
         });
 
         this.inputNodes.forEach((node) => {
-            if(!node.isComponentNode && node.connectedToRTL) {
+            if((!node.isComponentNode || node.isManualInputNode) && node.connectedToRTL) {
                 node.logicState.set(stateNeg(node.logicState));
                 node.logicState.set(stateNeg(node.logicState));
             }
