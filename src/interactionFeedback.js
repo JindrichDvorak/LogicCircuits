@@ -14,7 +14,7 @@ export function interactionInfoLogic(nodeManager, componentManager) {
         </ul>
     `;
 
-    const unsubscribe = stateManager.selectedWorldObject.subscribe(() => {
+    const unsubscribe = stateManager.interactionMode.subscribe(() => {
         interactionInfo.innerHTML = `
             <div>Interaction:</div>
             <ul>

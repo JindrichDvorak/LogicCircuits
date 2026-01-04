@@ -31,35 +31,38 @@ export class FullAdder extends Component {
         const nodeOffsetSide = 3;
 
         const labelA = document.createElement("div");
-        this.setupLabel(labelA, "A", 40, 22.5);
+        this.setupLabel(labelA, "A", 41.5, 20.5);
 
         this.aNode = nodeManager.createOutputNode(this.size.width / 2 - 26, 0, 0, 0, true);
         this.nodes.push(this.aNode);
         this.aState = this.aNode.logicState;
 
         const labelB = document.createElement("div");
-        this.setupLabel(labelB, "B", 90, 22.5);
+        this.setupLabel(labelB, "B", 92.5, 20.5);
 
         this.bNode = nodeManager.createOutputNode(this.size.width / 2 + 23.5, 0, 0, 0, true);
         this.nodes.push(this.bNode);
         this.bState = this.bNode.logicState;
 
         const labelCin = document.createElement("div");
-        this.setupLabel(labelCin, "C<sub>i</sub>", 27.5, 47.5);
+        this.setupLabel(labelCin, "C<sub>i</sub>", 26, 51);
 
         this.cInNode = nodeManager.createOutputNode(0, this.size.height / 2 - nodeOffsetSide, 0, 0, true);
         this.nodes.push(this.cInNode);
         this.cInState = this.cInNode.logicState;
 
         const labelS = document.createElement("div");
-        this.setupLabel(labelS, "S", 65, 75);
+        this.setupLabel(labelS, "S", 66, 82.5);
 
         this.sNode = nodeManager.createInputNode(this.size.width / 2 - 0.5, this.size.height, 0, 0, true);
         this.nodes.push(this.sNode);
         this.sState = this.sNode.logicState;
 
         const labelCout = document.createElement("div");
-        this.setupLabel(labelCout, "C<sub>o</sub>", 95, 47.5);
+        this.setupLabel(labelCout, "C<sub>o</sub>", 102.5, 51);
+
+        const adderLabel = document.createElement("div");
+        this.setupLabel(adderLabel, `<span style="color: white;">.</span>Full\nadder`, 60, 45);
 
         this.cNode = nodeManager.createInputNode(this.size.width, this.size.height / 2 - nodeOffsetSide, 0, 0, true);
         this.nodes.push(this.cNode);

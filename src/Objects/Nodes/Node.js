@@ -77,6 +77,8 @@ export class Node {
         this.transistorOn = false;
         this.componentId = -1;
         this.isManualInputNode = false;
+        this.nodeNumber = state(-1);
+        this.nodeNumber.allowSignal = false;
 
         // TODO: Find a better solution:
         // ! After loading, input nodes react to mouseup events originating from world.
@@ -230,6 +232,8 @@ export class Node {
     onMouseMove(e) {
         if(this.isFixed) return;
         if(!this.isDragging) return;
+
+        stateManager.interactionMode.set(InteractionMode.DRAGGING);
 
         this.element.style.visibility = "visible";
 

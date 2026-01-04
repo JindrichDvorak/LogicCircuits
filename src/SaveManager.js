@@ -250,6 +250,8 @@ export class SaveManager {
         const dataString = this.removeExcesIndent`
             {
                 "fileName": "${this.fileNameInput.innerText}",
+                "displayGrid": ${stateManager.displayGrid},
+                "lockControls": ${stateManager.lockControls},
                 "camera": {
                 ${cameraString},
                 "components": [
@@ -377,6 +379,14 @@ export class SaveManager {
                     component = this.componentManager.createFullAdder(componentObject.x, componentObject.y, 0, 0);
 
                     break;
+                } case ComponentType.TWO_BIT_INPUT: {
+                    component = this.componentManager.createTwoBitInput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.THREE_BIT_INPUT: {
+                    component = this.componentManager.createThreeBitInput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
                 } case ComponentType.FOUR_BIT_INPUT: {
                     component = this.componentManager.createFourBitInput(componentObject.x, componentObject.y, 0, 0);
 
@@ -385,12 +395,44 @@ export class SaveManager {
                     component = this.componentManager.createEightBitInput(componentObject.x, componentObject.y, 0, 0);
 
                     break;
+                } case ComponentType.TWO_BIT_OUTPUT: {
+                    component = this.componentManager.createTwoBitOutput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.THREE_BIT_OUTPUT: {
+                    component = this.componentManager.createThreeBitOutput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
                 } case ComponentType.FOUR_BIT_OUTPUT: {
                     component = this.componentManager.createFourBitOutput(componentObject.x, componentObject.y, 0, 0);
 
                     break;
                 } case ComponentType.EIGHT_BIT_OUTPUT: {
                     component = this.componentManager.createEightBitOutput(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.TWO_TO_ONE_MUX: {
+                    component = this.componentManager.createTwoToOneMUX(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.FOUR_TO_ONE_MUX: {
+                    component = this.componentManager.createFourToOneMUX(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.EIGHT_TO_ONE_MUX: {
+                    component = this.componentManager.createEightToOneMUX(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.ONE_TO_TWO_DEMUX: {
+                    component = this.componentManager.createOneToTwoDEMUX(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.ONE_TO_FOUR_DEMUX: {
+                    component = this.componentManager.createOneToFourDEMUX(componentObject.x, componentObject.y, 0, 0);
+
+                    break;
+                } case ComponentType.ONE_TO_EIGHT_DEMUX: {
+                    component = this.componentManager.createOneToEightDEMUX(componentObject.x, componentObject.y, 0, 0);
 
                     break;
                 }
@@ -506,5 +548,13 @@ export class SaveManager {
         this.connectWires();
 
         this.componentManager.components.forEach((component) => component.setupOutputState());
+
+        stateManager.displayGrid = this.data.displayGrid;
+        stateManager.displayGridFeedback.signal();
+
+        stateManager.lockControls = this.data.lockControls;
+        stateManager.lockControlsFeedback.signal();
+
+        stateManager.setDefaultInteractionState();
     }
 }

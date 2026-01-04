@@ -12,13 +12,23 @@ import { XORgate } from "./LogicGates/XORgate";
 import { NXORgate } from "./LogicGates/NXORgate";
 import { HalfAdder } from "./Circuits/HalfAdder";
 import { FullAdder } from "./Circuits/FullAdder";
+import { TwoBitInput } from "./Circuits/TwoBitInput";
+import { ThreeBitInput } from "./Circuits/ThreeBitInput";
 import { FourBitInput } from "./Circuits/FourBitInput";
 import { EightBitInput } from "./Circuits/EightBitInput";
+import { TwoBitOutput } from "./Circuits/TwoBitOutput";
+import { ThreeBitOutput } from "./Circuits/ThreeBitOutput";
+import { FourBitOutput } from "./Circuits/FourBitOutput";
+import { EightBitOutput } from "./Circuits/EightBitOutput";
+import { TwoToOneMUX } from "./Circuits/TwoToOneMUX";
+import { FourToOneMUX } from "./Circuits/FourToOneMUX";
+import { EightToOneMUX } from "./Circuits/EightToOneMUX";
+import { OneToTwoDEMUX } from "./Circuits/OneToTwoDEMUX";
+import { OneToFourDEMUX } from "./Circuits/OneToFourDEMUX";
+import { OneToEightDEMUX } from "./Circuits/OneToEightDEMUX";
 import { ComponentType } from "./Component";
 import { stateManager } from "../../State/StateManager";
 import { getRandomNumberId } from "../../utils";
-import { FourBitOutput } from "./Circuits/FourBitOutput";
-import { EightBitOutput } from "./Circuits/EightBitOutput";
 
 
 export class ComponentManager {
@@ -281,6 +291,40 @@ export class ComponentManager {
         return component;
     }
 
+    createTwoBitInput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 77.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new TwoBitInput(this.camera, ComponentType.TWO_BIT_INPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new TwoBitInput(this.camera, ComponentType.TWO_BIT_INPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createThreeBitInput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 77.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new ThreeBitInput(this.camera, ComponentType.THREE_BIT_INPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new ThreeBitInput(this.camera, ComponentType.THREE_BIT_INPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
     createFourBitInput(x, y, mouseX, mouseY) {
         const width = 70;
         const height = 77.5;
@@ -308,6 +352,46 @@ export class ComponentManager {
             component.element.style.visibility = "hidden";
         } else {
             component = new EightBitInput(this.camera, ComponentType.EIGHT_BIT_INPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createTwoBitOutput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 77.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new TwoBitOutput(this.camera, ComponentType.TWO_BIT_OUTPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+
+            component.rotate();
+            component.rotate();
+        } else {
+            component = new TwoBitOutput(this.camera, ComponentType.TWO_BIT_OUTPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createThreeBitOutput(x, y, mouseX, mouseY) {
+        const width = 70;
+        const height = 77.5;
+        let component;
+        if(this.manualInteraction) {
+            component = new ThreeBitOutput(this.camera, ComponentType.THREE_BIT_OUTPUT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+
+            //component.rotate();
+            //component.rotate();
+        } else {
+            component = new ThreeBitOutput(this.camera, ComponentType.THREE_BIT_OUTPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
         }
         component.lastMousePosition = { x: mouseX, y: mouseY };
         this.components.push(component);
@@ -355,6 +439,108 @@ export class ComponentManager {
         return component;
     }
 
+    createTwoToOneMUX(x, y, mouseX, mouseY) {
+        const width = 87;
+        const height = 87;
+        let component;
+        if(this.manualInteraction) {
+            component = new TwoToOneMUX(this.camera, ComponentType.TWO_TO_ONE_MUX, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new TwoToOneMUX(this.camera, ComponentType.TWO_TO_ONE_MUX, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createFourToOneMUX(x, y, mouseX, mouseY) {
+        const width = 97;
+        const height = 125;
+        let component;
+        if(this.manualInteraction) {
+            component = new FourToOneMUX(this.camera, ComponentType.FOUR_TO_ONE_MUX, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new FourToOneMUX(this.camera, ComponentType.FOUR_TO_ONE_MUX, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createEightToOneMUX(x, y, mouseX, mouseY) {
+        const width = 97;
+        const height = 200;
+        let component;
+        if(this.manualInteraction) {
+            component = new EightToOneMUX(this.camera, ComponentType.EIGHT_TO_ONE_MUX, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new EightToOneMUX(this.camera, ComponentType.EIGHT_TO_ONE_MUX, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createOneToTwoDEMUX(x, y, mouseX, mouseY) {
+        const width = 87;
+        const height = 87;
+        let component;
+        if(this.manualInteraction) {
+            component = new OneToTwoDEMUX(this.camera, ComponentType.ONE_TO_TWO_DEMUX, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new OneToTwoDEMUX(this.camera, ComponentType.ONE_TO_TWO_DEMUX, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createOneToFourDEMUX(x, y, mouseX, mouseY) {
+        const width = 97;
+        const height = 125;
+        let component;
+        if(this.manualInteraction) {
+            component = new OneToFourDEMUX(this.camera, ComponentType.ONE_TO_FOUR_DEMUX, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new OneToFourDEMUX(this.camera, ComponentType.ONE_TO_FOUR_DEMUX, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
+    createOneToEightDEMUX(x, y, mouseX, mouseY) {
+        const width = 97;
+        const height = 200;
+        let component;
+        if(this.manualInteraction) {
+            component = new OneToEightDEMUX(this.camera, ComponentType.ONE_TO_EIGHT_DEMUX, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new OneToEightDEMUX(this.camera, ComponentType.ONE_TO_EIGHT_DEMUX, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
+    }
+
     getComponentById(componentId) {
         let desirredComponent;
         this.components.forEach((component) => {
@@ -364,6 +550,10 @@ export class ComponentManager {
             }
         });
         return desirredComponent;
+    }
+
+    lockComponentControls(value) {
+        this.components.forEach((component) => component.lockControls(value));
     }
 
     deleteComponent(component) {

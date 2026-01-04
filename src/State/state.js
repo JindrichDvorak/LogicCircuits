@@ -34,7 +34,7 @@ export function state(initialValue) {
 }
 
 export function stateExpression(expression, ...values) {
-    const expressionResult = expression(...values.map((value) => value.get()));
+    const expressionResult = expression(...values.map((value) => {value.get()}));
     const expressionState = state(expressionResult);
 
     values.forEach((value) => {

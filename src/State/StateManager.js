@@ -23,6 +23,11 @@ class StateManager {
         });
         this.errorMessage = "";
 
+        this.displayGrid = true;
+        this.displayGridFeedback = state();
+        this.lockControls = false;
+        this.lockControlsFeedback = state();
+
         this.clearWorld = false;
 
         this.tempElement;

@@ -16,10 +16,20 @@ export const ComponentType = Object.freeze({
     NXOR_GATE: "NXOR",
     HALF_ADDER_CIRCUIT: "Half adder",
     FULL_ADDER_CIRCUIT: "Full adder",
+    TWO_BIT_INPUT: "2-bit input",
+    THREE_BIT_INPUT: "3-bit input",
     FOUR_BIT_INPUT: "4-bit input",
     EIGHT_BIT_INPUT: "8-bit input",
+    TWO_BIT_OUTPUT: "2-bit output",
+    THREE_BIT_OUTPUT: "3-bit output",
     FOUR_BIT_OUTPUT: "4-bit output",
-    EIGHT_BIT_OUTPUT: "8-bit output"
+    EIGHT_BIT_OUTPUT: "8-bit output",
+    TWO_TO_ONE_MUX: "2-1 MUX",
+    FOUR_TO_ONE_MUX: "4-1 MUX",
+    EIGHT_TO_ONE_MUX: "8-1 MUX",
+    ONE_TO_TWO_DEMUX: "1-2 DEMUX",
+    ONE_TO_FOUR_DEMUX: "1-4 DEMUX",
+    ONE_TO_EIGHT_DEMUX: "1-8 DEMUX"
 });
 
 export class Component {
@@ -48,8 +58,10 @@ export class Component {
         this.nodes = [];
         this.labels = [];
         this.controls = [];
+        this.controlButtons = [];
         this.controlStates = [];
         this.tempElement;
+        this.lockedControls = false;
 
         this.createElement();
         this.registerEvents();
@@ -125,6 +137,7 @@ export class Component {
 
         this.element.appendChild(controlSwitch);
         if(allowRotation) this.controls.push(controlSwitch);
+        this.controlButtons.push(controlSwitch);
     }
 
     calculateControlSwitchSize(innerHTML) {
@@ -132,6 +145,22 @@ export class Component {
         tempElement.innerHTML = innerHTML;
 
         return length = Math.max(tempElement.offsetWidth, tempElement.offsetHeight);
+    }
+
+    lockControls(value) {
+        if(value) {
+            this.controlButtons.forEach((button) => {
+                button.style.visibility = "hidden";
+                button.classList.remove("componentButton");
+                button.classList.add("lockedComponentButton");
+            });
+        } else {
+            this.controlButtons.forEach((button) => {
+                button.style.visibility = "visible";
+                button.classList.remove("lockedComponentButton");
+                button.classList.add("componentButton");
+            });
+        }
     }
 
     setupOutputState() {

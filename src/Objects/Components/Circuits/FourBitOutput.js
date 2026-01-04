@@ -75,6 +75,7 @@ export class FourBitOutput extends Component {
 
         this.numberLabel = document.createElement("div");
         this.numberLabel.style.fontFamily = "monospace";
+        this.numberLabel.style.fontSize = "medium";
         this.setupLabel(this.numberLabel, "0", 21.75, 68);
 
         this.digitLabel0 = document.createElement("div");
@@ -94,7 +95,7 @@ export class FourBitOutput extends Component {
         this.setupLabel(this.digitLabel3, "0", 40, 61);
 
         this.numberSwitch = document.createElement("div");
-        this.setupControlSwitch(this.numberSwitch, this.naturalNumbers, 4, 3.5, () => {});
+        this.setupControlSwitch(this.numberSwitch, this.naturalNumbers, 4, 3, () => {});
         let length = this.naturalNumbersSize;
         this.numberSwitch.style.width = `${length}px`;
         this.numberSwitch.style.height = `${length}px`;
@@ -112,7 +113,7 @@ export class FourBitOutput extends Component {
         });
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowUp, 4, 56, () => {
+        this.setupControlSwitch(this.digitSwitch, this.arrowUp, 4, 60, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {

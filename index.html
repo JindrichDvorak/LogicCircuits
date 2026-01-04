@@ -23,6 +23,11 @@
     <div style="display: flex; flex-direction: row; height: calc(100vh - 32px);">
       <div id="controls" style="width: 90px; border: solid 1px; overflow: scroll;">
         <hr style="margin-top: 0px;">
+        <div>
+          <input type="checkbox" id="showGrid" name="showGrid" />
+          <label for="showGrid">Grid</label>
+        </div>
+        <hr>
         <button id="newInput" style="width: 100%;">Input</button>
         <button id="newOutput" style="width: 100%;">Output</button>
         <button id="newTextField" style="width: 100%;">Text</button>
@@ -57,23 +62,31 @@
         <details>
           <summary style="user-select: none; padding-left: 5px;">Circuits</summary>
         <hr>
+          <div>
+            <input type="checkbox" id="lock" name="lock" />
+            <label for="lock">Lock</label>
+          </div>
+          <hr>
+          <button id="new2bitInput" style="width: 100%;">2-bit input</button>
+          <button id="new3bitInput" style="width: 100%;">3-bit input</button>
           <button id="new4bitInput" style="width: 100%;">4-bit input</button>
           <button id="new8bitInput" style="width: 100%;">8-bit input</button>
           <hr>
+          <button id="new2bitOutput" style="width: 100%;">2-bit output</button>
+          <button id="new3bitOutput" style="width: 100%;">3-bit output</button>
           <button id="new4bitOutput" style="width: 100%;">4-bit output</button>
           <button id="new8bitOutput" style="width: 100%;">8-bit output</button>
           <hr>
           <button id="newHalfAdder" style="width: 100%;">Half adder</button>
           <button id="newFullAdder" style="width: 100%;">Full adder</button>
           <hr>
-          
-          <button id="new2to1Mux" style="width: 100%; background: red;">2-1 MUX</button>
-          <button id="new4to1Mux" style="width: 100%; background: red;">4-1 MUX</button>
-          <button id="new8to1Mux" style="width: 100%; background: red;">8-1 MUX</button>
+          <button id="new2to1MUX" style="width: 100%;">2-1 MUX</button>
+          <button id="new4to1MUX" style="width: 100%;">4-1 MUX</button>
+          <button id="new8to1MUX" style="width: 100%;">8-1 MUX</button>
           <hr>
-          <button id="new2to1Demux" style="width: 100%; background: red;">1-2 DEMUX</button>
-          <button id="new4to1Demux" style="width: 100%; background: red;">1-4 DEMUX</button>
-          <button id="new8to1Demux" style="width: 100%; background: red;">1-8 DEMUX</button>
+          <button id="new1to2DEMUX" style="width: 100%;">1-2 DEMUX</button>
+          <button id="new1to4DEMUX" style="width: 100%;">1-4 DEMUX</button>
+          <button id="new1to8DEMUX" style="width: 100%;">1-8 DEMUX</button>
         </details>
         <hr style="margin-bottom: 0px;">
       </div>

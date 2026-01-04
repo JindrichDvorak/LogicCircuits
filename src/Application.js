@@ -18,6 +18,28 @@ export class Application {
 
         this.saveManager = new SaveManager(this.camera, this.nodeManager, this.componentManager);
 
+        this.showGrid = document.getElementById("showGrid");
+        this.showGrid.addEventListener("click", () => this.toggleGrid());
+        this.showGrid.checked = true;
+        this.toggleGrid();
+        
+        stateManager.displayGrid = true;
+        stateManager.displayGridFeedback.subscribe(() => {
+            this.showGrid.checked = stateManager.displayGrid;
+            this.toggleGrid();
+        });
+
+        this.lock = document.getElementById("lock");
+        this.lock.addEventListener("click", () => this.toggleLock());
+        this.lock.checked = false;
+        this.toggleLock();
+
+        stateManager.lockControls = false;
+        stateManager.lockControlsFeedback.subscribe(() => {
+            this.lock.checked = stateManager.lockControls;
+            this.toggleLock();
+        });
+
         this.createTempElement();
 
         this.registerEvents();
@@ -32,9 +54,31 @@ export class Application {
         tempElement.style.margin = "0";
         tempElement.style.padding = "0";
         tempElement.style.boxSizing = "border-box";
+        tempElement.style.fontSize = "x-small";
         this.world.appendChild(tempElement);
 
         stateManager.tempElement = tempElement;
+    }
+
+    toggleGrid() {
+        if(this.showGrid.checked) {
+            this.world.classList.add("grid");
+            stateManager.displayGrid = true;
+        } else {
+            this.world.classList.remove("grid");
+            stateManager.displayGrid = false;
+        }
+    }
+
+    toggleLock() {
+        let value;
+        if(this.lock.checked) {
+            value = true;
+        } else {
+            value = false;
+        }
+        stateManager.lockControls = value;
+        this.componentManager.lockComponentControls(value);
     }
 
     registerEvents() {

@@ -1,4 +1,3 @@
-import { stateManager } from "./State/StateManager"; 
 import { Application } from "./Application";
 import { debugUILogic } from "./debugUI";
 import { interactionInfoLogic } from "./interactionFeedback";
@@ -190,6 +189,26 @@ newFullAdder.addEventListener("click", (e) => {
   app.componentManager.manualInteraction = false;
 });
 
+const new2bitInput = document.getElementById("new2bitInput");
+new2bitInput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createTwoBitInput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new3bitInput = document.getElementById("new3bitInput");
+new3bitInput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createThreeBitInput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
 const new4bitInput = document.getElementById("new4bitInput");
 new4bitInput.addEventListener("click", (e) => {
   const mouseX = e.clientX;
@@ -207,6 +226,26 @@ new8bitInput.addEventListener("click", (e) => {
   const coords = { x: mouseX, y: mouseY };
   app.componentManager.manualInteraction = true;
   app.componentManager.createEightBitInput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new2bitOutput = document.getElementById("new2bitOutput");
+new2bitOutput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createTwoBitOutput(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new3bitOutput = document.getElementById("new3bitOutput");
+new3bitOutput.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createThreeBitOutput(coords.x, coords.y, mouseX, mouseY);
   app.componentManager.manualInteraction = false;
 });
 
@@ -230,7 +269,65 @@ new8bitOutput.addEventListener("click", (e) => {
   app.componentManager.manualInteraction = false;
 });
 
-interactionInfoLogic(app.nodeManager, app.componentManager);
+const new2to1MUX = document.getElementById("new2to1MUX");
+new2to1MUX.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createTwoToOneMUX(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new4to1MUX = document.getElementById("new4to1MUX");
+new4to1MUX.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createFourToOneMUX(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new8to1MUX = document.getElementById("new8to1MUX");
+new8to1MUX.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createEightToOneMUX(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new1to2DEMUX = document.getElementById("new1to2DEMUX");
+new1to2DEMUX.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createOneToTwoDEMUX(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new1to4DEMUX = document.getElementById("new1to4DEMUX");
+new1to4DEMUX.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createOneToFourDEMUX(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
+const new1to8DEMUX = document.getElementById("new1to8DEMUX");
+new1to8DEMUX.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createOneToEightDEMUX(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
 
 // TODO: remove:
 //debugUILogic(app.nodeManager);
@@ -241,3 +338,14 @@ const dataString = `
 
 //app.saveManager.data = await JSON.parse(dataString);
 //app.saveManager.load();
+/*
+const component1 = app.componentManager.createOneToFourDEMUX(50110, 50220, 0, 0);
+component1.move();
+
+const component2 = app.componentManager.createOneToTwoDEMUX(50104.75, 50358.48, 0, 0);
+component2.move();
+
+const component3 = app.componentManager.createTwoToOneMUX(50222.85, 50358.13, 0, 0);
+component3.move();*/
+
+//interactionInfoLogic(app.nodeManager, app.componentManager);
