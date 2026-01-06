@@ -46,6 +46,16 @@ newOutput.addEventListener("click", (e) => {
   app.nodeManager.manualInteraction = false;
 });
 
+const newNodeJoint = document.getElementById("newNodeJoint");
+newNodeJoint.addEventListener("click", (e) => {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const coords = { x: mouseX, y: mouseY };
+  app.componentManager.manualInteraction = true;
+  app.componentManager.createNodeJoint(coords.x, coords.y, mouseX, mouseY);
+  app.componentManager.manualInteraction = false;
+});
+
 const newTextField = document.getElementById("newTextField");
 newTextField.addEventListener("click", (e) => {
   const mouseX = e.clientX;

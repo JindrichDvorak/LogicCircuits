@@ -81,7 +81,7 @@ export class TwoToOneMUX extends Component {
         this.setupLabel(this.muxLabel, "MUX", 32, 33.5);
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowDown, 51.5, 20.75, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowDown, 51.5, 20.75, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {

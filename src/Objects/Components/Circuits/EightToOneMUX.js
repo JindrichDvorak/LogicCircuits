@@ -171,7 +171,7 @@ export class EightToOneMUX extends Component {
         this.setupLabel(this.muxLabel, "MUX", 38, 88);
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowDown, 60, 22.5, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowDown, 60, 22.5, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {
@@ -197,7 +197,7 @@ export class EightToOneMUX extends Component {
         });
 
         this.opSwitch = document.createElement("div");
-        this.setupControlSwitch(this.opSwitch, this.arrowRight, 60, 145, () => {
+        this.setupControlSwitch(this.opSwitch, "componentButton", this.arrowRight, 60, 145, () => {
             if(this.opSwitchState.get() === 0) {
                 this.opSwitchState.set(1);
             } else {

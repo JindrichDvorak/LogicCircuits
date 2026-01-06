@@ -44,6 +44,8 @@ export class TwoBitInput extends Component {
         const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
         this.element.innerHTML = img;
 
+        this.ioComponent = true;
+
         // TODO: This needs to be size invariant --> remove and replace:
         this.aNode = nodeManager.createInputNode(70, 18.75, 0, 0, true);
         this.nodes.push(this.aNode);
@@ -73,7 +75,7 @@ export class TwoBitInput extends Component {
         this.setupLabel(this.digitLabel1, "1", 40, 51);
 
         this.numberSwitch = document.createElement("div");
-        this.setupControlSwitch(this.numberSwitch, this.naturalNumbers, 4, 3.5, () => {
+        this.setupControlSwitch(this.numberSwitch, "componentButton", this.naturalNumbers, 4, 3.5, () => {
             if(this.numberSwitchState.get() === 0) {
                 this.numberSwitchState.set(1);
             } else {
@@ -99,7 +101,7 @@ export class TwoBitInput extends Component {
         });
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowDown, 4, 60.5, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowDown, 4, 60.5, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {

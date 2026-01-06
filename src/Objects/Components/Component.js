@@ -1,7 +1,9 @@
 import { WorldObject, InteractionMode, stateManager } from "../../State/StateManager";
+import { NodeType } from "../Nodes/Node";
 
 
 export const ComponentType = Object.freeze({
+    NODE_JOINT: "Node joint",
     TEXT_FIELD: "Text",
     TRANSISTOR: "Transistor",
     RESISTOR: "Resistor",
@@ -62,6 +64,7 @@ export class Component {
         this.controlStates = [];
         this.tempElement;
         this.lockedControls = false;
+        this.ioComponent = false;
 
         this.createElement();
         this.registerEvents();
@@ -128,8 +131,8 @@ export class Component {
         this.labels.push(label);
     }
 
-    setupControlSwitch(controlSwitch, innerHTML, x, y, onClick, allowRotation = true) {
-        controlSwitch.classList.add("componentButton");
+    setupControlSwitch(controlSwitch, cssClass, innerHTML, x, y, onClick, allowRotation = true) {
+        controlSwitch.classList.add(cssClass);
         controlSwitch.style.left = `${x}px`;
         controlSwitch.style.top = `${y}px`;
         controlSwitch.innerHTML = innerHTML;
@@ -150,15 +153,37 @@ export class Component {
     lockControls(value) {
         if(value) {
             this.controlButtons.forEach((button) => {
-                button.style.visibility = "hidden";
-                button.classList.remove("componentButton");
-                button.classList.add("lockedComponentButton");
+                if(button.innerHTML === "<span>\u{02115}<sub>0</sub></span>" || button.innerHTML === "<span>\u{02124}</span>") {
+                    if(!(this.componentType === ComponentType.TWO_BIT_OUTPUT ||
+                        this.componentType === ComponentType.THREE_BIT_OUTPUT || 
+                        this.componentType === ComponentType.FOUR_BIT_OUTPUT ||
+                        this.componentType === ComponentType.EIGHT_BIT_OUTPUT)) {
+
+                        button.classList.remove("componentButton");
+                        button.classList.add("lockedComponentButton");
+                    } 
+                    
+                    button.style.pointerEvents = "none";
+                } else {
+                    button.style.visibility = "hidden";
+                }
             });
         } else {
             this.controlButtons.forEach((button) => {
-                button.style.visibility = "visible";
-                button.classList.remove("lockedComponentButton");
-                button.classList.add("componentButton");
+                if(button.innerHTML === "<span>\u{02115}<sub>0</sub></span>" || button.innerHTML === "<span>\u{02124}</span>") {
+                    if(!(this.componentType === ComponentType.TWO_BIT_OUTPUT ||
+                        this.componentType === ComponentType.THREE_BIT_OUTPUT || 
+                        this.componentType === ComponentType.FOUR_BIT_OUTPUT ||
+                        this.componentType === ComponentType.EIGHT_BIT_OUTPUT)) {
+
+                        button.classList.remove("lockedComponentButton");
+                        button.classList.add("componentButton");
+                    } 
+
+                    button.style.pointerEvents = "auto";
+                } else {
+                    button.style.visibility = "visible";
+                }
             });
         }
     }
@@ -171,6 +196,17 @@ export class Component {
 
     setNodeComponentId(componentId) {
         this.nodes.forEach((node) => node.componentId = componentId);
+    }
+
+    connectNextNodeToJoint() {
+        this.nodes.forEach((node) => {
+            if(node.nodeType === NodeType.OUTPUT && node.inputNodeId === -1) {
+                stateManager.connectOutputTrigger.signal(node.id);
+                return false;
+            }
+        });
+
+        return true;
     }
 
     //Events:
@@ -189,8 +225,16 @@ export class Component {
         this.mouseLeave = false;
         if(e.button === 0) {
             if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
-                stateManager.setDefaultInteractionState();
-                e.preventDefault();
+                if(this.componentType === ComponentType.NODE_JOINT) {
+                    const isFull = this.connectNextNodeToJoint();
+                    if(isFull) {
+                        stateManager.setDefaultInteractionState();
+                        e.preventDefault();
+                    }
+                } else {
+                    stateManager.setDefaultInteractionState();
+                    e.preventDefault();
+                }
             }
 
             //this.element.classList.add("animate");

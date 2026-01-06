@@ -45,6 +45,8 @@ export class TwoBitOutput extends Component {
         const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
         this.element.innerHTML = img;
 
+        this.ioComponent = true;
+
         // TODO: This needs to be size invariant --> remove and replace:
         this.aNode = nodeManager.createOutputNode(70, 18.75, 0, 0, true);
         this.nodes.push(this.aNode);
@@ -72,7 +74,7 @@ export class TwoBitOutput extends Component {
         this.setupLabel(this.digitLabel1, "0", 40, 51);
 
         this.numberSwitch = document.createElement("div");
-        this.setupControlSwitch(this.numberSwitch, this.naturalNumbers, 4, 3.5, () => {});
+        this.setupControlSwitch(this.numberSwitch, "lockedComponentButton", this.naturalNumbers, 4, 3.5, () => {});
         let length = this.naturalNumbersSize;
         this.numberSwitch.style.width = `${length}px`;
         this.numberSwitch.style.height = `${length}px`;
@@ -90,7 +92,7 @@ export class TwoBitOutput extends Component {
         });
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowUp, 4, 60.5, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowUp, 4, 60.5, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {
@@ -100,7 +102,7 @@ export class TwoBitOutput extends Component {
         length = this.arrowUpSize;
         this.digitSwitch.style.width = `${length}px`;
         this.digitSwitch.style.height = `${length}px`;
-        this.digitSwitchState = state(0);
+        this.digitSwitchState = state(1);
         this.controlStates.push(this.digitSwitchState);
         this.digitSwitchState.subscribe(() => {
             let length;

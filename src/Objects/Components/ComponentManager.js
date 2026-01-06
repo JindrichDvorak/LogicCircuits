@@ -1,3 +1,4 @@
+import { NodeJoint } from "./BasicComponents/NodeJoint";
 import { TextField } from "./TextField";
 import { Ground } from "./BasicComponents/Ground";
 import { Resistor } from "./BasicComponents/Resistor";
@@ -42,6 +43,23 @@ export class ComponentManager {
         this.transistorCount = 0;
 
         this.manualInteraction = false;
+    }
+
+    createNodeJoint(x, y, mouseX, mouseY) {
+        const width = 40;
+        const height = 40;
+        let component;
+        if(this.manualInteraction) {
+            component = new NodeJoint(this.camera, ComponentType.NODE_JOINT, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
+            component.isDragging = true;
+            component.element.style.visibility = "hidden";
+        } else {
+            component = new NodeJoint(this.camera, ComponentType.NODE_JOINT, getRandomNumberId(), x, y, width, height, this.nodeManager);
+        }
+        component.lastMousePosition = { x: mouseX, y: mouseY };
+        this.components.push(component);
+
+        return component;
     }
 
     createTextField(x, y, mouseX, mouseY) {
@@ -388,8 +406,8 @@ export class ComponentManager {
             component.isDragging = true;
             component.element.style.visibility = "hidden";
 
-            //component.rotate();
-            //component.rotate();
+            component.rotate();
+            component.rotate();
         } else {
             component = new ThreeBitOutput(this.camera, ComponentType.THREE_BIT_OUTPUT, getRandomNumberId(), x, y, width, height, this.nodeManager);
         }
@@ -591,9 +609,12 @@ export class ComponentManager {
 
     clearAllComponents() {
         const components = [...this.components];
+        const ioComponents = [];
         components.forEach((component) => {
             if(component.componentType === ComponentType.TEXT_FIELD) component.editable = false;
-            this.deleteComponent(component);
+            if(component.ioComponent) ioComponents.push(component);
+            else this.deleteComponent(component);
         });
+        ioComponents.forEach((component) => this.deleteComponent(component));
     }
 }

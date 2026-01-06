@@ -81,7 +81,7 @@ export class OneToTwoDEMUX extends Component {
         this.setupLabel(this.muxLabel, "DEMUX", 22.5, 33.5);
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowDown, 22, 20.5, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowDown, 22, 20.5, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {

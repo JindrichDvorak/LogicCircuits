@@ -308,7 +308,16 @@ export class SaveManager {
         this.data.components.forEach((componentObject) => {
             let component;
             switch(componentObject.componentType) {
-                case ComponentType.TEXT_FIELD: {
+                case ComponentType.NODE_JOINT: {
+                    component = this.componentManager.createNodeJoint(componentObject.x, componentObject.y, 0, 0);
+
+                    // TODO: Find a better solution:
+                    this.setupComponent(component, componentObject);
+
+                    component.setSpecialNodeIds();
+
+                    break;
+                } case ComponentType.TEXT_FIELD: {
                     component = this.componentManager.createTextField(componentObject.x, componentObject.y, 0, 0);
 
                     component.text = componentObject.text;

@@ -50,6 +50,8 @@ export class FourBitInput extends Component {
         const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
         this.element.innerHTML = img;
 
+        this.ioComponent = true;
+
         // TODO: This needs to be size invariant --> remove and replace:
         this.aNode = nodeManager.createInputNode(70, 9.25, 0, 0, true);
         this.nodes.push(this.aNode);
@@ -101,7 +103,7 @@ export class FourBitInput extends Component {
         this.setupLabel(this.digitLabel3, "3", 40, 61);
 
         this.numberSwitch = document.createElement("div");
-        this.setupControlSwitch(this.numberSwitch, this.naturalNumbers, 4, 3, () => {
+        this.setupControlSwitch(this.numberSwitch, "componentButton", this.naturalNumbers, 4, 3, () => {
             if(this.numberSwitchState.get() === 0) {
                 this.numberSwitchState.set(1);
             } else {
@@ -127,7 +129,7 @@ export class FourBitInput extends Component {
         });
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowDown, 4, 60, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowDown, 4, 60, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {

@@ -213,9 +213,10 @@ export class NodeManager {
         } else {
             outputNode.inputNodeId = inputNodeId;
             inputNode.outputNodeIds.push(outputNodeId);
-
-            this.setConnectedToRTL(inputNode);
         }
+
+        outputNode.outputNodeIds.forEach((id) => this.propagateOutputNodeId(outputNode, id));
+        if(inputNode.inputNodeId === -1) this.setConnectedToRTL(inputNode);
 
         stateManager.interactionMode.set(InteractionMode.NORMAL);
         stateManager.selectedWorldObject.set({
@@ -261,6 +262,8 @@ export class NodeManager {
                 if(inputNode.outputNodeIds.includes(outputNodeId)) {
                     inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNodeId), 1);
                 }
+
+                this.removeOutputNodeId(currentNode, outputNodeId);
             } else if(inputNodeId === -2) {
                 if(currentNode.isGrounded) {
                     inputNode = this.getNodeById(currentNode.inputNodeId);
@@ -271,9 +274,60 @@ export class NodeManager {
                 if(!inputNode.outputNodeIds.includes(outputNodeId)) {
                     inputNode.outputNodeIds.push(outputNodeId);
                 }
+
+                this.propagateOutputNodeId(currentNode, outputNodeId);
             }
         }
-        if(inputNodeId !== -2) currentNode.inputNodeId = inputNodeId;
+
+        if(inputNodeId !== -2) {
+            currentNode.inputNodeId = inputNodeId;
+        }
+    }
+
+    propagateOutputNodeId(currentNode, outputNodeId) {
+        const nextNode = this.getPrecedingNode(currentNode);
+        if(nextNode) {
+            if(!nextNode.outputNodeIds.includes(outputNodeId)) {
+                nextNode.outputNodeIds.push(outputNodeId);
+            }
+
+            return this.propagateOutputNodeId(nextNode, outputNodeId);
+        } else {
+            if(!currentNode.outputNodeIds.includes(outputNodeId)) {
+                currentNode.outputNodeIds.push(outputNodeId);
+            }
+        }
+    }
+
+    removeInputNodeId(currentNode) {
+        if(currentNode.nodeType === NodeType.OUTPUT) {
+            if(currentNode.isTransistorNode || currentNode.isResistorNode) {
+                const nextNode = this.getNodeById(currentNode.componentChildNodeId);
+                this.removeInputNodeId(nextNode);
+            }
+        } else {
+            currentNode.childNodeIds.forEach((childNodeId) => {
+                const childNode = this.getNodeById(childNodeId);
+                this.removeInputNodeId(childNode);
+            });
+        }
+
+        currentNode.inputNodeId = -1;
+    }
+
+    removeOutputNodeId(currentNode, outputNodeId) {
+        const nextNode = this.getPrecedingNode(currentNode);
+        if(nextNode) {
+            if(nextNode.outputNodeIds.includes(outputNodeId)) {
+                nextNode.outputNodeIds.splice(nextNode.outputNodeIds.indexOf(outputNodeId), 1);
+            }
+
+            return this.removeOutputNodeId(nextNode, outputNodeId);
+        } else {
+            if(currentNode.outputNodeIds.includes(outputNodeId)) {
+                currentNode.outputNodeIds.splice(currentNode.outputNodeIds.indexOf(outputNodeId), 1);
+            }
+        }
     }
 
     getPrecedingNode(node) {
@@ -429,9 +483,11 @@ export class NodeManager {
             if(inputNode.outputNodeIds.includes(outputNode.id)) this.propagateInputNodeId(outputNode, -1);
         } else {
             if(inputNode) inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNode.id), 1);
-            outputNode.inputNodeId = -1;
         }
         
+        this.removeOutputNodeId(outputNode, outputNode.id);
+        outputNode.inputNodeId = -1;
+
         const parentNode = this.getNodeById(outputNode.childNodeIds[0]);
         parentNode.removeChildNode(outputNode.id);
 
@@ -452,6 +508,9 @@ export class NodeManager {
         if(node.nodeType === NodeType.OUTPUT) {
             this.disconnectOutputNode(node);
         } else {
+            const outputNodeIds = [...node.outputNodeIds];
+            outputNodeIds.forEach((outputNodeId) => this.removeOutputNodeId(node, outputNodeId));
+
             const childNodeIds = [...node.childNodeIds];
             childNodeIds.forEach((childId) => {
                 const childNode = this.getNodeById(childId);
@@ -463,7 +522,6 @@ export class NodeManager {
                 }
             });
         }
-        this.setupNodePaths();
     }
 
     deleteNodeChain(node) {
@@ -491,6 +549,8 @@ export class NodeManager {
         else if(node.nodeType === NodeType.INPUT && node.childNodeIds.length > 0) {
             this.deleteChildren(node);
         } else this.deleteGeneralNode(node);
+
+        this.setupNodePaths();
     }
 
     clearAllNodes() {

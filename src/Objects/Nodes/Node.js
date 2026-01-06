@@ -79,10 +79,19 @@ export class Node {
         this.isManualInputNode = false;
         this.nodeNumber = state(-1);
         this.nodeNumber.allowSignal = false;
+        this.isNodeJointNode = false;
+        this.componentParentNodes = [];
 
         // TODO: Find a better solution:
         // ! After loading, input nodes react to mouseup events originating from world.
         this.isBlocked = true;
+
+        // TODO: Remove:
+        /*this.textLabel = document.createElement("span");
+        this.textLabel.innerText = this.id;
+        this.textLabel.style.background = "white";
+        this.textLabel.style.left = `${this.size.width + 10}px`;
+        this.textLabel.style.position = "absolute";*/
 
         this.createElement();
         this.registerEvents();
@@ -103,13 +112,8 @@ export class Node {
 
         this.world.appendChild(this.element);
 
-        /*// TODO: Remove:
-        const text = document.createElement("span");
-        text.innerText = this.id;
-        text.style.background = "white";
-        text.style.left = `${this.size.width + 10}px`;
-        text.style.position = "absolute";
-        this.element.appendChild(text);*/
+        // TODO: Remove:
+        //this.element.appendChild(this.textLabel);
 
         this.move();
     }
@@ -180,6 +184,8 @@ export class Node {
     // TODO: Fix e.stopPropagation():
     onMouseDown(e) {
         // TODO: Remove:
+        //this.textLabel.innerText = this.id;
+
         this.isBlocked = false;
 
         this.mouseLeave = false;

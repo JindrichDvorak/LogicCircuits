@@ -49,6 +49,8 @@ export class ThreeBitOutput extends Component {
         const img = imgSVG.replace("<svg", `<svg width="${this.size.width}px"`);
         this.element.innerHTML = img;
 
+        this.ioComponent = true;
+
         // TODO: This needs to be size invariant --> remove and replace:
         this.aNode = nodeManager.createOutputNode(70, 19, 0, 0, true);
         this.nodes.push(this.aNode);
@@ -84,7 +86,7 @@ export class ThreeBitOutput extends Component {
         this.setupLabel(this.digitLabel2, "0", 40, 50);
 
         this.numberSwitch = document.createElement("div");
-        this.setupControlSwitch(this.numberSwitch, this.naturalNumbers, 4, 3, () => {});
+        this.setupControlSwitch(this.numberSwitch, "lockedComponentButton", this.naturalNumbers, 4, 3, () => {});
         let length = this.naturalNumbersSize;
         this.numberSwitch.style.width = `${length}px`;
         this.numberSwitch.style.height = `${length}px`;
@@ -102,7 +104,7 @@ export class ThreeBitOutput extends Component {
         });
 
         this.digitSwitch = document.createElement("div");
-        this.setupControlSwitch(this.digitSwitch, this.arrowUp, 4, 60, () => {
+        this.setupControlSwitch(this.digitSwitch, "componentButton", this.arrowUp, 4, 60, () => {
             if(this.digitSwitchState.get() === 0) {
                 this.digitSwitchState.set(1);
             } else {
