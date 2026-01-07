@@ -109,7 +109,7 @@ export class Application {
     }
 
     onKeyDown(e) {
-        if(e.key === "Delete") {
+        if(e.key === "Delete" || e.key === "Backspace") {
             const selectedWorldObject = stateManager.selectedWorldObject.get();
             if(selectedWorldObject.id === -1) return;
 

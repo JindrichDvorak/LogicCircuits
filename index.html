@@ -14,6 +14,10 @@
       <div id="fileNameInput" style="flex-grow: 1; text-align: center; align-content: center;" 
         contenteditable="true" spellcheck="false">Logic circuit</div>
       <div style="width: fit-content; display: flex;">
+        <select id="saveTarget">
+          <option value="browser">Save to Browser</option>
+          <option value="file">Save to File</option>
+        </select>
         <button id="saveButton" style="width: fit-content;">Save</button>
         <button id="loadButton" style="width: fit-content;">Load</button>
         <input id="fileInput" type="file" accept=".json" hidden>

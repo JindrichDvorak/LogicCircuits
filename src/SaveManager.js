@@ -234,7 +234,7 @@ export class SaveManager {
         return this.addIndent(outputNodeString, this.stringIndent);
     }
 
-    save() {
+    save(mode = "file") {
         const cameraString = this.addIndent(this.removeExcesIndent`
                     "x": ${this.camera.position.x},
                     "y": ${this.camera.position.y},
@@ -266,10 +266,18 @@ export class SaveManager {
                 ${nodeString}
             }
         `;
-        const blob = new Blob([dataString], { type: "application/json" });
-        this.anchor.href = URL.createObjectURL(blob);
-        this.anchor.download = `${this.fileNameInput.innerText}.json`;
-        this.anchor.click();
+        if (mode === "file") {
+            const blob = new Blob([dataString], {type: "application/json"});
+            this.anchor.href = URL.createObjectURL(blob);
+            this.anchor.download = `${this.fileNameInput.innerText}.json`;
+            this.anchor.click();
+        } else if (mode === "browser") {
+            localStorage.setItem("saved-circuit", dataString);
+            document.body.style.backgroundColor = "lime";
+            setTimeout(() => {
+                document.body.style.backgroundColor = "unset";
+            }, 200);
+        }
     }
 
     setupComponent(component, componentObject) {
@@ -536,7 +544,10 @@ export class SaveManager {
         stateManager.setDefaultInteractionState();
     }
 
-    load() {
+    load(mode = "file", dataString) {
+        if (mode === "browser" && dataString) {
+            this.data = JSON.parse(dataString);
+        }
         if(!this.data.fileName) return;
 
         this.clearWorld();

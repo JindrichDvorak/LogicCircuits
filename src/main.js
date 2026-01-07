@@ -16,13 +16,27 @@ fileNameInput.addEventListener("keydown", (e) => {
 });
 
 const saveButton = document.getElementById("saveButton");
-saveButton.addEventListener("click", (e) => app.saveManager.save());
+const saveTargetSelect = document.getElementById("saveTarget");
+saveButton.addEventListener("click", (e) =>
+    app.saveManager.save(saveTargetSelect.value)
+);
 
 const loadButton = document.getElementById("loadButton");
-loadButton.addEventListener("click", (e) => app.saveManager.openLoadDialog());
+loadButton.addEventListener("click", (e) => {
+  if (saveTargetSelect.value === "browser") {
+    app.saveManager.load("browser", localStorage.getItem("saved-circuit"));
+  } else {
+    app.saveManager.openLoadDialog();
+  }
+});
 
 const clearButton = document.getElementById("clearButton");
-clearButton.addEventListener("click", (e) => app.saveManager.clearWorld());
+clearButton.addEventListener("click", (e) => {
+      if (confirm("Are you sure?")) {
+        app.saveManager.clearWorld();
+      }
+    }
+);
 
 // * Controls:
 // * IO:
