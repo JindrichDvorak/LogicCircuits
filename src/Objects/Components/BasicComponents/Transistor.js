@@ -27,7 +27,7 @@ export class Transistor extends Component {
 
         const nodeOffset = 28.5;
 
-        this.baseNode = nodeManager.createOutputNode(0, this.size.height / 2 - 2.5, 0, 0, true);
+        this.baseNode = nodeManager.createOutputNode(0, this.size.height / 2, 0, 0, true);
         this.nodes.push(this.baseNode);
         this.baseState = this.baseNode.logicState;
 

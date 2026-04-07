@@ -52,14 +52,14 @@ export class TwoBitInput extends Component {
         this.aNode.logicState = state(0);
         this.aState = this.aNode.logicState;
         this.aNode.logicState.subscribe(() => this.aNode.onLogicStateChange());
-        this.aNode.isManualInputNode = true;
+        this.aNode.isManualNode = true;
 
         this.bNode = nodeManager.createInputNode(70, 56.5, 0, 0, true);
         this.nodes.push(this.bNode);
         this.bNode.logicState = state(0);
         this.bState = this.bNode.logicState;
         this.bNode.logicState.subscribe(() => this.bNode.onLogicStateChange());
-        this.bNode.isManualInputNode = true;
+        this.bNode.isManualNode = true;
 
         this.numberLabel = document.createElement("div");
         this.numberLabel.style.fontFamily = "monospace";

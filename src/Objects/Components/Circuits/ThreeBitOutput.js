@@ -55,18 +55,22 @@ export class ThreeBitOutput extends Component {
         this.aNode = nodeManager.createOutputNode(70, 19, 0, 0, true);
         this.nodes.push(this.aNode);
         this.aState = this.aNode.logicState;
+        this.aNode.isManualNode = true;
 
         this.bNode = nodeManager.createOutputNode(70, 38, 0, 0, true);
         this.nodes.push(this.bNode);
         this.bState = this.bNode.logicState;
+        this.bNode.isManualNode = true;
 
         this.cNode = nodeManager.createOutputNode(70, 56.5, 0, 0, true);
         this.nodes.push(this.cNode);
         this.cState = this.cNode.logicState;
+        this.cNode.isManualNode = true;
 
         this.numberSwitchNode = nodeManager.createOutputNode(28, 0, 0, 0, true);
         this.nodes.push(this.numberSwitchNode);
         this.numberSwitchState = this.numberSwitchNode.logicState;
+        this.numberSwitchNode.isManualNode = true;
 
         this.numberLabel = document.createElement("div");
         this.numberLabel.style.fontFamily = "monospace";

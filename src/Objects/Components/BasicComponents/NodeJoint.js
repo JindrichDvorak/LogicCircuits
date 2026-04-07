@@ -1,5 +1,6 @@
 import { Component } from "../Component";
 import { stateExpression } from "../../../State/state";
+import { stateManager } from "../../../State/StateManager";
 
 import imgSVG from "/joint.svg?raw";
 import { NodeType } from "../../Nodes/Node";
@@ -196,6 +197,8 @@ export class NodeJoint extends Component {
         );
         this.outNode.logicState.subscribe(() => this.outNode.onLogicStateChange());
 
+        this.changeVisual(stateManager.lockControls);
+
         this.setNodeComponentId(this.id);
     }
 
@@ -236,5 +239,28 @@ export class NodeJoint extends Component {
                 this.outNode.componentParentNodes.push(node.id);
             }
         });
+    }
+
+    changeVisual(lock) {
+        if(lock) {
+            this.element.style.visibility = "hidden";
+
+            this.outNode.relativePosition = { x: 20, y: 20 };
+            this.outNode.size = { width: 9, height: 9 };
+
+            this.outNode.element.style.background = "black";
+        } else {
+            this.element.style.visibility = "visible";
+
+            this.outNode.relativePosition = { x: 40, y: 20 };
+            this.outNode.size = { width: 15, height: 15 };
+
+            this.outNode.element.style.background = "white";
+        }
+
+        this.outNode.element.style.width = `${this.outNode.size.width}px`;
+        this.outNode.element.style.height = `${this.outNode.size.height}px`;
+        this.outNode.onLogicStateChange();
+        this.move();
     }
 }

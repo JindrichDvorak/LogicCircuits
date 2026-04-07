@@ -80,8 +80,8 @@ export class ComponentManager {
     }
 
     createTransistor(x, y, mouseX, mouseY) {
-        const width = 100;
-        const height = 100;
+        const width = 95;
+        const height = 95;
         let component;
         if(this.manualInteraction) {
             component = new Transistor(this.camera, ComponentType.TRANSISTOR, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
@@ -101,7 +101,7 @@ export class ComponentManager {
 
     createResistor(x, y, mouseX, mouseY) {
         const width = 20;
-        const height = 100;
+        const height = 95;
         let component;
         if(this.manualInteraction) {
             component = new Resistor(this.camera, ComponentType.RESISTOR, getRandomNumberId(), x - width / 2, y - height / 2, width, height, this.nodeManager);
@@ -600,6 +600,10 @@ export class ComponentManager {
                 stateManager.transistorPresent.set(false);
         }
         this.components.splice(this.components.indexOf(component), 1);
+
+        if(!stateManager.clearWorld) {
+            this.nodeManager.setupNodePaths();
+        }
     }
 
     deleteComponentById(componentId) {

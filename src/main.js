@@ -353,23 +353,7 @@ new1to8DEMUX.addEventListener("click", (e) => {
   app.componentManager.manualInteraction = false;
 });
 
+app.saveManager.load("browser", localStorage.getItem("saved-circuit"));
+
 // TODO: remove:
-//debugUILogic(app.nodeManager);
-
-const dataString = `
-
-`;
-
-//app.saveManager.data = await JSON.parse(dataString);
-//app.saveManager.load();
-/*
-const component1 = app.componentManager.createOneToFourDEMUX(50110, 50220, 0, 0);
-component1.move();
-
-const component2 = app.componentManager.createOneToTwoDEMUX(50104.75, 50358.48, 0, 0);
-component2.move();
-
-const component3 = app.componentManager.createTwoToOneMUX(50222.85, 50358.13, 0, 0);
-component3.move();*/
-
-//interactionInfoLogic(app.nodeManager, app.componentManager);
+debugUILogic(app.nodeManager, app.componentManager);

@@ -70,56 +70,56 @@ export class EightBitInput extends Component {
         this.aNode.logicState = state(0);
         this.aState = this.aNode.logicState;
         this.aNode.logicState.subscribe(() => this.aNode.onLogicStateChange());
-        this.aNode.isManualInputNode = true;
+        this.aNode.isManualNode = true;
 
         this.bNode = nodeManager.createInputNode(70, 28, 0, 0, true);
         this.nodes.push(this.bNode);
         this.bNode.logicState = state(0);
         this.bState = this.bNode.logicState;
         this.bNode.logicState.subscribe(() => this.bNode.onLogicStateChange());
-        this.bNode.isManualInputNode = true;
+        this.bNode.isManualNode = true;
 
         this.cNode = nodeManager.createInputNode(70, 47.25, 0, 0, true);
         this.nodes.push(this.cNode);
         this.cNode.logicState = state(0);
         this.cState = this.cNode.logicState;
         this.cNode.logicState.subscribe(() => this.cNode.onLogicStateChange());
-        this.cNode.isManualInputNode = true;
+        this.cNode.isManualNode = true;
 
         this.dNode = nodeManager.createInputNode(70, 66, 0, 0, true);
         this.nodes.push(this.dNode);
         this.dNode.logicState = state(0);
         this.dState = this.dNode.logicState;
         this.dNode.logicState.subscribe(() => this.dNode.onLogicStateChange());
-        this.dNode.isManualInputNode = true;
+        this.dNode.isManualNode = true;
 
         this.eNode = nodeManager.createInputNode(70, 84.75, 0, 0, true);
         this.nodes.push(this.eNode);
         this.eNode.logicState = state(0);
         this.eState = this.eNode.logicState;
         this.eNode.logicState.subscribe(() => this.eNode.onLogicStateChange());
-        this.eNode.isManualInputNode = true;
+        this.eNode.isManualNode = true;
 
         this.fNode = nodeManager.createInputNode(70, 103.75, 0, 0, true);
         this.nodes.push(this.fNode);
         this.fNode.logicState = state(0);
         this.fState = this.fNode.logicState;
         this.fNode.logicState.subscribe(() => this.fNode.onLogicStateChange());
-        this.fNode.isManualInputNode = true;
+        this.fNode.isManualNode = true;
 
         this.gNode = nodeManager.createInputNode(70, 122.5, 0, 0, true);
         this.nodes.push(this.gNode);
         this.gNode.logicState = state(0);
         this.gState = this.gNode.logicState;
         this.gNode.logicState.subscribe(() => this.gNode.onLogicStateChange());
-        this.gNode.isManualInputNode = true;
+        this.gNode.isManualNode = true;
 
         this.hNode = nodeManager.createInputNode(70, 141.5, 0, 0, true);
         this.nodes.push(this.hNode);
         this.hNode.logicState = state(0);
         this.hState = this.hNode.logicState;
         this.hNode.logicState.subscribe(() => this.hNode.onLogicStateChange());
-        this.hNode.isManualInputNode = true;
+        this.hNode.isManualNode = true;
 
         this.numberLabel = document.createElement("div");
         this.numberLabel.style.fontFamily = "monospace";

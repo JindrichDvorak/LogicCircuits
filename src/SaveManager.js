@@ -284,7 +284,7 @@ export class SaveManager {
         for(let i = 0; i < component.nodes.length; i++) {
             const node = component.nodes[i];
             node.id = componentObject.nodeIds[i];
-            if(node.isManualInputNode) node.isBlocked = true;
+            if(node.isManualNode) node.isBlocked = true;
         }
         for(let i = 0; i < component.controlStates.length; i++) {
             component.controlStates[i].set(componentObject.controlStates[i]);

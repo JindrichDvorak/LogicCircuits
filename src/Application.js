@@ -78,6 +78,7 @@ export class Application {
             value = false;
         }
         stateManager.lockControls = value;
+        this.nodeManager.lockNodeControls(value);
         this.componentManager.lockComponentControls(value);
     }
 

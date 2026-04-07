@@ -37,6 +37,7 @@ export class NodeManager {
         stateManager.recalcualteResistanceTrigger.subscribe(() => {
             if(stateManager.transistorPresent.get() && !stateManager.clearWorld) {
                 this.setupNodePaths();
+                this.setupNodePaths();
             }
         });
     }
@@ -206,7 +207,6 @@ export class NodeManager {
         outputNode.addChildNode(node.id);
 
         outputNode.connectLogicStates(node.logicState);
-        node.logicState.signal();
 
         if(outputNode.isTransistorNode || outputNode.isResistorNode) {
             this.propagateInputNodeId(outputNode, inputNodeId);
@@ -215,8 +215,8 @@ export class NodeManager {
             inputNode.outputNodeIds.push(outputNodeId);
         }
 
-        outputNode.outputNodeIds.forEach((id) => this.propagateOutputNodeId(outputNode, id));
-        if(inputNode.inputNodeId === -1) this.setConnectedToRTL(inputNode);
+        inputNode.outputNodeIds.forEach((id) => this.propagateOutputNodeId(outputNode, id));
+        this.setConnectedToRTL(inputNode);
 
         stateManager.interactionMode.set(InteractionMode.NORMAL);
         stateManager.selectedWorldObject.set({
@@ -225,6 +225,7 @@ export class NodeManager {
         });
 
         this.setupNodePaths();
+        node.logicState.signal();
     }
 
     setConnectedToRTL(inputNode) {
@@ -359,20 +360,18 @@ export class NodeManager {
 
         if(stateManager.resistorPresent.get() || stateManager.transistorPresent.get() || stateManager.groundPresent.get()) {
             const pathResistances = [];
-            let resistance = 0;
+            let resistance = 1;
             inputNode.outputNodeIds.forEach((outputNodeId) => {
                 let nextNode = this.getNodeById(outputNodeId);
                 while(nextNode.id !== inputNode.id) {
-                    if(nextNode.isResistorNode && nextNode.nodeType === NodeType.OUTPUT) resistance++;
-                    if(nextNode.isGrounded) resistance += -0.5;
-                    if(nextNode.isTransistorNode && nextNode.nodeType === NodeType.OUTPUT && !nextNode.transistorOn) {
-                        resistance += 1000;
-                    }
+                    if(nextNode.isResistorNode && nextNode.nodeType === NodeType.OUTPUT) resistance += 1;
+                    else if(nextNode.isGrounded) resistance += -0.5;
+                    else if(nextNode.isTransistorNode && nextNode.nodeType === NodeType.OUTPUT && !nextNode.transistorOn) resistance += 1000;
 
                     nextNode = this.getPrecedingNode(nextNode);
                 }
                 pathResistances.push(resistance);
-                resistance = 0;
+                resistance = 1;
             });
 
             const minResistance = Math.min(...pathResistances);
@@ -380,7 +379,7 @@ export class NodeManager {
                 if(pathResistances[pathCounter] !== minResistance) {
                     let node = this.getNodeById(inputNode.outputNodeIds[pathCounter]);
                     while(node.id !== inputNode.id) {
-                        node.resistorCount = pathResistances[pathCounter];
+                        node.resistance = pathResistances[pathCounter];
                         node.logicState.allowSignal = false;
                         if(node.nodeType !== NodeType.INPUT) node.logicState.set(0);
 
@@ -392,11 +391,92 @@ export class NodeManager {
                 if(pathResistances[pathCounter] === minResistance) {
                     let node = this.getNodeById(inputNode.outputNodeIds[pathCounter]);
                     while(node.id !== inputNode.id) {
-                        node.resistorCount = pathResistances[pathCounter];
+                        node.resistance = pathResistances[pathCounter];
                         node.logicState.allowSignal = true;
 
                         node = this.getPrecedingNode(node);
                     }
+                }
+            }
+        }
+    }
+
+    calculateResistance() {
+        const endOutputNodes = [];
+        this.inputNodes.forEach((inputNode) => {
+            if(!inputNode.isComponentNode || inputNode.isManualNode || inputNode.isJointNode) 
+                inputNode.outputNodeIds.forEach((id) => endOutputNodes.push(this.getNodeById(id)));
+        });
+
+        let resistance = 1;
+        const pathResistances = [];
+        endOutputNodes.forEach((outputNode) => {
+            let nextNode = outputNode;
+            resistance = 1;
+            while(nextNode.id !== outputNode.inputNodeId) {
+                if(nextNode.isResistorNode && nextNode.nodeType === NodeType.OUTPUT) resistance += 1;
+                if(nextNode.isGrounded) resistance += -0.5;
+                if(nextNode.isTransistorNode && nextNode.nodeType === NodeType.OUTPUT) {
+                    if(nextNode.transistorOn) resistance += 0;
+                    else resistance += 1000;
+                } 
+
+                nextNode = this.getPrecedingNode(nextNode);
+            }
+
+            pathResistances.push(resistance);
+        });
+
+        let paths = []
+        for(let i = 0; i < endOutputNodes.length; i++)
+        {
+            paths.push({
+                outputNodeId: endOutputNodes[i].id,
+                pathResistance: pathResistances[i]
+            });
+        }
+        paths.sort((a, b) => {
+            return b.pathResistance - a.pathResistance;
+        });
+
+        let outputNode;
+        paths.forEach((path) => {
+            outputNode = this.getNodeById(path.outputNodeId);
+            let nextNode = outputNode;
+            while(nextNode.id !== outputNode.inputNodeId) {
+                nextNode.resistance = path.pathResistance;
+
+                nextNode = this.getPrecedingNode(nextNode);
+            }
+        });
+    }
+
+    closeNodes(inputNode){
+        let pathResistances = [];
+        inputNode.outputNodeIds.forEach((id) => pathResistances.push(this.getNodeById(id).resistance));
+
+        const minResistance = Math.min(...pathResistances);
+        for(let pathCounter = 0; pathCounter < pathResistances.length; pathCounter++) {
+            if(pathResistances[pathCounter] !== minResistance) {
+                let node = this.getNodeById(inputNode.outputNodeIds[pathCounter]);
+                while(node.id !== inputNode.id) {
+                    node.resistance = pathResistances[pathCounter];
+                    node.logicState.allowSignal = false;
+                    if(node.nodeType !== NodeType.INPUT) node.logicState.set(0);
+
+                    node = this.getPrecedingNode(node);
+                }
+            }
+        }
+
+        for(let pathCounter = 0; pathCounter < pathResistances.length; pathCounter++) {
+            if(pathResistances[pathCounter] === minResistance) {
+                let node = this.getNodeById(inputNode.outputNodeIds[pathCounter]);
+                while(node.id !== inputNode.id) {
+                    node.resistance = pathResistances[pathCounter];
+                    node.logicState.allowSignal = true;
+
+                    node = this.getPrecedingNode(node);
                 }
             }
         }
@@ -408,27 +488,49 @@ export class NodeManager {
         });
         this.nodes.forEach((node) => node.logicState.allowSignal = true);
         this.outputNodes.forEach((node) => node.logicState.allowSignal = true);
-
+        /*
         this.inputNodes.forEach((node) => {
-            if((!node.isComponentNode || node.isManualInputNode) && node.connectedToRTL) {
+            if((!node.isComponentNode || node.isManualNode)) {
                 node.logicState.set(stateNeg(node.logicState));
-                node.logicState.set(stateNeg(node.logicState));
+                //node.logicState.set(stateNeg(node.logicState));
             }
         });
-    
+        this.inputNodes.forEach((node) => {
+            if((!node.isComponentNode || node.isManualNode)) {
+                node.logicState.set(stateNeg(node.logicState));
+            }
+        });*/
+        
+        this.calculateResistance();
         this.inputNodes.forEach((inputNode) => {
-            if(!(inputNode.isResistorNode || inputNode.isTransistorNode) && inputNode.connectedToRTL) {
-                this.calculatePathResistance(inputNode);
+            if(!(inputNode.isResistorNode || inputNode.isTransistorNode)) {
+                this.closeNodes(inputNode);
             }
         });
-
+        
         this.inputNodes.forEach((node) => {
-            if((!node.isComponentNode || node.isManualInputNode) && node.connectedToRTL) {
+            if((!node.isComponentNode || node.isManualNode)) {
                 node.logicState.set(stateNeg(node.logicState));
+                //node.logicState.set(stateNeg(node.logicState));
+            }
+        });
+        this.inputNodes.forEach((node) => {
+            if((!node.isComponentNode || node.isManualNode)) {
                 node.logicState.set(stateNeg(node.logicState));
             }
         });
         stateManager.interactionTrigger.signal();
+
+        // TODO: Remove:
+        /*this.nodes.forEach((node) => node.updateTextLabel());
+        this.inputNodes.forEach((node) => node.updateTextLabel());
+        this.outputNodes.forEach((node) => node.updateTextLabel());*/
+    }
+
+    lockNodeControls(value) {
+        this.inputNodes.forEach((node) => node.lockNode(value));
+        this.nodes.forEach((node) => node.lockNode(value));
+        this.outputNodes.forEach((node) => node.lockNode(value));
     }
 
     deleteNode(node) {
@@ -463,6 +565,10 @@ export class NodeManager {
     }
 
     deleteOutputNode(outputNode) {
+        if(!stateManager.clearWorld) {
+            this.disconnectOutputNode(outputNode);
+        }
+
         if(outputNode.childNodeIds.length > 0) {
             const node = this.getNodeById(outputNode.childNodeIds[0]);
             node.removeChildNode(outputNode.id);
@@ -473,11 +579,14 @@ export class NodeManager {
             inputNode.outputNodeIds.splice(inputNode.outputNodeIds.indexOf(outputNode.id), 1);
         }
 
-        if(!stateManager.clearWorld) this.setupNodePaths();
         this.deleteNode(outputNode);
+        if(!stateManager.clearWorld) {
+            if(!outputNode.isComponentNode) this.setupNodePaths();
+        }
     }
 
-    disconnectOutputNode(outputNode) {        
+    disconnectOutputNode(outputNode) {       
+        if(outputNode.inputNodeId === -1) return; 
         const inputNode = this.getNodeById(outputNode.inputNodeId);
         if(outputNode.isTransistorNode || outputNode.isResistorNode) {
             if(inputNode.outputNodeIds.includes(outputNode.id)) this.propagateInputNodeId(outputNode, -1);

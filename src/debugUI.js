@@ -1,7 +1,7 @@
 import { InteractionMode, stateManager, WorldObject } from "./State/StateManager";
 
 
-export function debugUILogic(nodeManager) {
+export function debugUILogic(nodeManager, componentManager) {
     const debugUI = document.getElementById("debugUI");
     debugUI.classList.add("debugUI");
 
@@ -45,7 +45,9 @@ export function debugUILogic(nodeManager) {
                         <li>Logic state: ${selectedNode.logicState.get()}</li>
                         <li>Connected to RTL: ${selectedNode.connectedToRTL}</li>
                         <li>Is open: ${selectedNode.logicState.allowSignal}</li>
-                        <li>Resistance: ${selectedNode.resistorCount}</li>
+                        <li>Resistance: ${selectedNode.resistance}</li>
+                        <li>IsComponentNode: ${selectedNode.isComponentNode}</li>
+                        <li>Open transistor: ${selectedNode.transistorOn}</li>
                         <li>Child nodes:</li>
                             ${childNodeString}
                         <li>Output nodes:</li>
@@ -54,14 +56,22 @@ export function debugUILogic(nodeManager) {
                 `;
             }
         } else {
-            debugUI.innerHTML = `
-                <div>Interaction:</div>
-                <ul>
-                    <li>Mode: ${stateManager.interactionMode.get()}</li>
-                    <li>Element type: ${stateManager.selectedWorldObject.get().type} 
-                        (${stateManager.selectedWorldObject.get().id})</li>
-                </ul>
-            `;
+            if(stateManager.selectedWorldObject.get().type === WorldObject.COMPONENT)
+            {
+                const selectedComponent = componentManager.getComponentById(stateManager.selectedWorldObject.get().id);
+                debugUI.innerHTML = `
+                    <div>Interaction:</div>
+                    <ul>
+                        <li>Mode: ${stateManager.interactionMode.get()}</li>
+                        <li>Element type: ${stateManager.selectedWorldObject.get().type} 
+                            (${stateManager.selectedWorldObject.get().id})</li>
+                    </ul>
+                    <div>${stateManager.selectedWorldObject.get().id}:</div>
+                    <ul>
+                        <li>Parent: </li>
+                    </ul>
+                `;
+            }
         }
     });
 }

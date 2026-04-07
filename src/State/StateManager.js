@@ -32,6 +32,8 @@ class StateManager {
 
         this.tempElement;
 
+        this.blockTransistorUpdate = false;
+
         // * Circuit state:
         this.resistorPresent = state(false);
         this.groundPresent = state(false);

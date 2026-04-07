@@ -186,6 +186,9 @@ export class Component {
                 }
             });
         }
+
+        if(this.componentType === ComponentType.NODE_JOINT) this.changeVisual(value);
+        this.move();
     }
 
     setupOutputState() {

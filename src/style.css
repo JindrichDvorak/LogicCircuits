@@ -119,6 +119,14 @@ hr {
     border: solid 1px black;
 }
 
+.nodeCon {
+    user-select: none;
+
+    position: absolute;
+    border-radius: 50%;
+    background: black;
+}
+
 .node.output {
     border: dashed 1px black;
 }
@@ -126,6 +134,11 @@ hr {
 .node:hover {
     border: solid 2px orange;
     translate: -1px -1px;
+}
+
+.nodeCon:hover {
+    border: solid 2px orange;
+    translate: -2px -2px;
 }
 
 .node.output:hover {

@@ -70,13 +70,15 @@ export class Node {
         this.isTransistorNode = false;
         this.foundRTL = false;
         this.connectedToRTL = false;
+        this.isJointNode = false;
+        this.resistance = 1;
 
         // * Component node logic:
         this.isComponentNode = isComponentNode;
         this.relativePosition = { x: 0, y: 0 };
         this.transistorOn = false;
         this.componentId = -1;
-        this.isManualInputNode = false;
+        this.isManualNode = false;
         this.nodeNumber = state(-1);
         this.nodeNumber.allowSignal = false;
         this.isNodeJointNode = false;
@@ -88,13 +90,21 @@ export class Node {
 
         // TODO: Remove:
         /*this.textLabel = document.createElement("span");
-        this.textLabel.innerText = this.id;
+        this.textLabel.innerText = this.connectedToRTL;
         this.textLabel.style.background = "white";
         this.textLabel.style.left = `${this.size.width + 10}px`;
         this.textLabel.style.position = "absolute";*/
 
         this.createElement();
         this.registerEvents();
+        //this.lockNode(stateManager.lockControls);
+    }
+
+    // TODO: Remove:
+    updateTextLabel() {
+        this.textLabel.innerText = this.logicState.allowSignal;
+        if(this.logicState.allowSignal) this.textLabel.style.background = "red";
+        else this.textLabel.style.background = "white";
     }
 
     createElement() {
@@ -106,6 +116,8 @@ export class Node {
         this.element.style.top = `${this.position.y}px`;
 
         if(this.nodeType === NodeType.NODE) {
+            this.element.classList.remove("node");
+            this.element.classList.add("nodeCon");
             this.element.innerHTML = ``;
             this.element.style.background = "black";
         }
@@ -134,12 +146,51 @@ export class Node {
         this.move();
     }
 
+    lockNode(value) {
+        //this.isFixed = value;
+
+        if(this.isComponentNode && !this.isNodeJointNode && !this.isManualNode) {
+            if(value) {
+                this.size = { width: 7, height: 7 };
+
+                this.element.classList.remove("node");
+                this.element.classList.add("nodeCon");
+
+                //this.element.style.visibility = "hidden";
+            } else {
+                this.size = { width: 15, height: 15 };
+
+                this.element.classList.remove("nodeCon");
+                this.element.classList.add("node");
+                if(this.nodeType === NodeType.OUTPUT) this.element.classList.add("node.output");
+
+                this.element.style.visibility = "visible";
+            }
+            this.element.style.width = `${this.size.width}px`;
+            this.element.style.height = `${this.size.height}px`;
+            this.move();
+            this.onLogicStateChange();
+        } else if(this.nodeType === NodeType.NODE && !this.isJointNode) {
+            if(value) {
+                this.size = { width: 5, height: 5 };
+            } else {
+                this.size = { width: 10, height: 10 };
+            }
+            this.element.style.width = `${this.size.width}px`;
+            this.element.style.height = `${this.size.height}px`;
+            this.move();
+            this.onLogicStateChange();
+        }
+    }
+
     onLogicStateChange() {
         if(!this.logicState.allowSignal) this.logicState.set(0);
 
         if(this.logicState.get() === 0) {
             if(this.nodeType === NodeType.INPUT || this.nodeType === NodeType.OUTPUT) {
-                this.element.style.background = "white";
+                if(this.isComponentNode && !this.isManualNode && !this.isNodeJointNode && stateManager.lockControls) this.element.style.background = "black";
+                else if(!(this.isNodeJointNode && stateManager.lockControls)) this.element.style.background = "white";
+                else this.element.style.background = "black";
             } else {
                 this.element.style.background = "black";
             }
@@ -164,10 +215,12 @@ export class Node {
 
     addChildNode(childNodeId) {
         this.childNodeIds.push(childNodeId);
+        if(this.childNodeIds.length > 1) this.isJointNode = true;
     }
 
     removeChildNode(childNodeId) {
         this.childNodeIds.splice(this.childNodeIds.indexOf(childNodeId), 1);
+        if(this.childNodeIds.length <= 1) this.isJointNode = false;
     }
 
     //Events:
@@ -261,7 +314,7 @@ export class Node {
         if(e.button === 0) {
             if(this.isDragging) {
                 stateManager.setDefaultInteractionState();
-            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && (!this.isComponentNode || this.isManualInputNode)) {
+            } else if(this.nodeType === NodeType.INPUT && !this.mouseLeave && (!this.isComponentNode || this.isManualNode)) {
                 this.logicState.set(stateNeg(this.logicState));
                 stateManager.recalcualteResistanceTrigger.signal();
                 stateManager.interactionTrigger.signal();
