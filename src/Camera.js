@@ -16,13 +16,6 @@ export class Camera {
         this.angleSnappedMousePosition = { x: 0, y: 0 };
         this.lastClickedMousePosition = { x: 0, y: 0 };
 
-        this.testDiv = document.createElement("div");
-        this.testDiv.style.width = "10px";
-        this.testDiv.style.height = "10px";
-        this.testDiv.style.position = "absolute";
-        this.testDiv.style.border = "1px solid black";
-        this.world.appendChild(this.testDiv);
-
         this.registerEvents();
         this.transformWorld();
     }
@@ -50,9 +43,15 @@ export class Camera {
         return this.sceneToWorldCoords(sceneCoords.x, sceneCoords.y);
     }
 
+    worldToScreenCoords(x, y) {
+        return {
+            x: x * this.zoom + this.scenePosition.x - this.position.x,
+            y: y * this.zoom + this.scenePosition.y - this.position.y
+        };
+    }
+
     getAngleSnappedMousePosition() {
         return this.screenToWorldCoords(this.angleSnappedMousePosition.x, this.angleSnappedMousePosition.y);
-        //return this.angleSnappedMousePosition;
     }
 
     toDegrees(angle) {
@@ -78,31 +77,7 @@ export class Camera {
         if(e.button === 2) {
             this.isDragging = true;
             this.lastMousePosition = { x: e.clientX, y: e.clientY };   
-        } else if(e.button === 0) {
-            /*if(this.isShiftPressed) {
-                const dx = this.lastClickedMousePosition.x - e.clientX;
-                const dy = this.lastClickedMousePosition.y - e.clientY;
-                let angle = Math.atan2(dy, -dx);
-                const length = Math.hypot(dx, dy);
-
-                angle = this.toDegrees(-angle);
-                let snappedAngle = Math.round(angle / 45.0) * 45.0;
-                
-                console.log("----------------------------------");
-                console.log(`Angle:    ${snappedAngle} :: ${this.toRadians(snappedAngle)}`);
-                console.log(`LastPos:  ${this.lastClickedMousePosition.x},    ${this.lastClickedMousePosition.y}`);
-                console.log(`Client:   ${e.clientX},    ${e.clientY}`);
-                console.log(`Length:   ${length}`);
-                console.log("----------------------------------");
-                
-                snappedAngle = this.toRadians(snappedAngle);
-                
-                this.angleSnappedMousePosition = {
-                    x: this.lastClickedMousePosition.x + length * Math.cos(snappedAngle),
-                    y: this.lastClickedMousePosition.y + length * Math.sin(snappedAngle)
-                };
-            }   */
-        }
+        } 
     }
 
     onMouseMove(e) {
@@ -144,6 +119,10 @@ export class Camera {
             const newPos = this.screenToWorldCoords(this.angleSnappedMousePosition.x, this.angleSnappedMousePosition.y);
             this.testDiv.style.left = `${newPos.x}px`;
             this.testDiv.style.top = `${newPos.y}px`;
+
+            const newPos2 = this.screenToWorldCoords(this.lastClickedMousePosition.x, this.lastClickedMousePosition.y);
+            this.startPosDiv.style.left = `${newPos2.x}px`;
+            this.startPosDiv.style.top = `${newPos2.y}px`;
         }
     }
 

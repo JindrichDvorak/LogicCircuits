@@ -10,7 +10,6 @@ export class Application {
     constructor() {
         this.world = document.getElementById("world");
         this.scene = document.getElementById("scene");
-        this.backgroundScene = document.getElementById("backgroundScene");
 
         //this.camera = new Camera(this.world, this.scene, 50000, 50000, 1);
         this.camera = new Camera(this.world, this.scene, 0, 0, 1);
@@ -110,8 +109,11 @@ export class Application {
                     coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
                 }
                 this.nodeManager.manualInteraction = true;
-                this.nodeManager.createNode(coords.x, coords.y);
-                this.camera.lastClickedMousePosition = { x: e.clientX, y: e.clientY };
+                const newNode = this.nodeManager.createNode(coords.x, coords.y);
+                this.camera.lastClickedMousePosition = this.camera.worldToScreenCoords(
+                    newNode.position.x + newNode.size.width / 2, 
+                    newNode.position.y + newNode.size.height / 2
+                );
                 this.nodeManager.manualInteraction = false;
             }
         } else if(e.button === 2) {
