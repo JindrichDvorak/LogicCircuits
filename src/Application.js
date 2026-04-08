@@ -40,6 +40,8 @@ export class Application {
             this.toggleLock();
         });
 
+        this.isShiftPressed = false;
+
         this.createTempElement();
 
         this.registerEvents();
@@ -86,6 +88,7 @@ export class Application {
         this.world.addEventListener("mousedown", (e) => this.onMouseDown(e));
 
         window.addEventListener("keydown", (e) => this.onKeyDown(e));
+        window.addEventListener("keyup", (e) => this.onKeyUp(e));
 
         // * Disable context menu:
         this.world.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -134,6 +137,14 @@ export class Application {
                 const component = this.componentManager.getComponentById(stateManager.selectedWorldObject.get().id);
                 component.rotate();
             }
+        } else if(e.key === "Shift") {
+            this.isShiftPressed = true;
+        }
+    }
+
+    onKeyUp(e) {
+        if(e.key === "Shift") {
+            this.isShiftPressed = false;
         }
     }
 }

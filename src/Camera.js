@@ -12,6 +12,10 @@ export class Camera {
         this.scenePosition = { x: sceneRect.left, y: sceneRect.top };
         this.worldPosition = { x: this.scenePosition.x, y: this.scenePosition.y };
 
+        this.isShiftPressed = false;
+        this.angleSnappedMousePosition = { x: 0, y: 0 };
+        this.lastClickedMousePosition = { x: 0, y: 0 };
+
         this.registerEvents();
         this.transformWorld();
     }
@@ -39,29 +43,49 @@ export class Camera {
         return this.sceneToWorldCoords(sceneCoords.x, sceneCoords.y);
     }
 
+    getAngleSnappedMousePosition() {
+        return this.angleSnappedMousePosition;
+    }
+
     registerEvents() {
         this.world.addEventListener("mousedown", (e) => this.onMouseDown(e));
         window.addEventListener("mousemove", (e) => this.onMouseMove(e));
         window.addEventListener("mouseup", (e) => this.onMouseUp(e));
 
         this.scene.addEventListener("wheel", (e) => this.onMouseWheel(e));
+
+        window.addEventListener("keydown", (e) => this.onKeyDown(e));
+        window.addEventListener("keyup", (e) => this.onKeyUp(e));
     }
 
     onMouseDown(e) {
         if(e.button === 2) {
             this.isDragging = true;
             this.lastMousePosition = { x: e.clientX, y: e.clientY };
+            this.lastClickedMousePosition = this.lastMousePosition;
         }
     }
 
     onMouseMove(e) {
-        if(!this.isDragging) return;
-
         const dx = this.lastMousePosition.x - e.clientX;
         const dy = this.lastMousePosition.y - e.clientY;
 
-        this.position.x += dx;
-        this.position.y += dy;
+        if(this.isDragging) {
+            this.position.x += dx;
+            this.position.y += dy;
+        }
+
+        if(this.isShiftPressed) {
+            const angle = Math.atan2(dx, dy);
+            const length = Math.hypot(dx, dy);
+
+            const snappedAngle = Math.floor(angle / Math.PI * 4) * Math.PI / 4;
+            this.angleSnappedMousePosition = {
+                x: this.lastClickedMousePosition.x + length * Math.cos(snappedAngle),
+                y: this.lastClickedMousePosition.y + length * Math.sin(snappedAngle)
+            };
+        }
+
         this.lastMousePosition = { x: e.clientX, y: e.clientY };
 
         this.transformWorld();
@@ -94,5 +118,17 @@ export class Camera {
         this.transformWorld();
 
         e.preventDefault()
+    }
+
+    onKeyDown(e) {
+        if(e.key === "Shift") {
+            this.isShiftPressed = true;
+        }
+    }
+
+    onKeyUp(e) {
+        if(e.key === "Shift") {
+            this.isShiftPressed = false;
+        }
     }
 }
