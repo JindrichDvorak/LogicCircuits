@@ -44,7 +44,7 @@ export class Camera {
     }
 
     getAngleSnappedMousePosition() {
-        return this.angleSnappedMousePosition;
+        return this.screenToWorldCoords(this.angleSnappedMousePosition.x, this.angleSnappedMousePosition.y);
     }
 
     registerEvents() {
@@ -62,13 +62,16 @@ export class Camera {
         if(e.button === 2) {
             this.isDragging = true;
             this.lastMousePosition = { x: e.clientX, y: e.clientY };
-            this.lastClickedMousePosition = this.lastMousePosition;
+            this.lastClickedMousePosition = { x: e.clientX, y: e.clientY };
+        } else if(e.button === 0) {
+            this.lastClickedMousePosition = { x: e.clientX, y: e.clientY };
         }
+        this.lastClickedMousePosition = { x: e.clientX, y: e.clientY };
     }
 
     onMouseMove(e) {
-        const dx = this.lastMousePosition.x - e.clientX;
-        const dy = this.lastMousePosition.y - e.clientY;
+        let dx = this.lastMousePosition.x - e.clientX;
+        let dy = this.lastMousePosition.y - e.clientY;
 
         if(this.isDragging) {
             this.position.x += dx;
@@ -76,10 +79,12 @@ export class Camera {
         }
 
         if(this.isShiftPressed) {
+            dx = this.lastClickedMousePosition.x - e.clientX;
+            dy = this.lastClickedMousePosition.y - e.clientY;
             const angle = Math.atan2(dx, dy);
             const length = Math.hypot(dx, dy);
 
-            const snappedAngle = Math.floor(angle / Math.PI * 4) * Math.PI / 4;
+            const snappedAngle = Math.round(angle / Math.PI) * Math.PI;
             this.angleSnappedMousePosition = {
                 x: this.lastClickedMousePosition.x + length * Math.cos(snappedAngle),
                 y: this.lastClickedMousePosition.y + length * Math.sin(snappedAngle)

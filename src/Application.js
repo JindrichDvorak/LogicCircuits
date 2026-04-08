@@ -102,7 +102,12 @@ export class Application {
                 node.isDragging = false;
                 stateManager.interactionMode.set(InteractionMode.NORMAL);
             } else if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
-                const coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
+                let coords;
+                if(this.isShiftPressed) {
+                    coords = this.camera.getAngleSnappedMousePosition();
+                } else {
+                    coords = this.camera.screenToWorldCoords(e.clientX, e.clientY);
+                }
                 this.nodeManager.manualInteraction = true;
                 this.nodeManager.createNode(coords.x, coords.y);
                 this.nodeManager.manualInteraction = false;

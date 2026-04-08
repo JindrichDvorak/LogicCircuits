@@ -356,4 +356,4 @@ new1to8DEMUX.addEventListener("click", (e) => {
 app.saveManager.load("browser", localStorage.getItem("saved-circuit"));
 
 // TODO: remove:
-debugUILogic(app.nodeManager, app.componentManager);
+//debugUILogic(app.nodeManager, app.componentManager);
