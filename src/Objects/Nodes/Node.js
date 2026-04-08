@@ -240,8 +240,11 @@ export class Node {
         //this.textLabel.innerText = this.id;
 
         this.isBlocked = false;
-
         this.mouseLeave = false;
+
+        this.camera.lastClickedMousePosition = { x: e.clientX, y: e.clientY };
+        //this.camera.lastClickedMousePosition = { x: this.position.x, y: this.position.y };
+
         if(e.button === 0) {
             if(stateManager.interactionMode.get() === InteractionMode.CONNECTING) {
                 if(this.nodeType === NodeType.OUTPUT && this.inputNodeId === -1) {
@@ -271,7 +274,6 @@ export class Node {
                     const mousePosition = this.camera.screenToWorldCoords(e.clientX, e.clientY);
                     this.lastMousePosition = { x: mousePosition.x, y: mousePosition.y };
                 }
-                
             }
             e.stopPropagation();
         } else if(e.button === 2) {
