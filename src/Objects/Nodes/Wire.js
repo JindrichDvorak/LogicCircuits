@@ -11,7 +11,7 @@ export class Wire {
 
         // ? DEBUG:
         this.showBoundngBox = false;
-        this.borderWidth = 0.75;
+        this.borderWidth = 0;
         this.borderColor = "red";
 
         this.unsubStart;
@@ -64,52 +64,52 @@ export class Wire {
         let endX;
         let endY;
         if(dx >= 0 && dy >= 0) {
-            width += endNodeWidth;
-            height += endNodeHeight;
+            width += endNodeWidth - 2 * this.borderWidth;
+            height += endNodeHeight - 2 * this.borderWidth;
 
-            this.element.style.left = `${x0 - this.wireWidth / 2}px`;
-            this.element.style.top = `${y0 - this.wireWidth}px`;
-            this.element.style.width = `${width + this.wireWidth}px`;
-            this.element.style.height = `${height + this.wireWidth}px`;
+            this.element.style.left = `${x0}px`;
+            this.element.style.top = `${y0}px`;
+            this.element.style.width = `${width}px`;
+            this.element.style.height = `${height}px`;
 
             startX = startNodeWidth / 2;
-            startY = startNodeHeight / 2 + this.wireWidth;
-            endX = width - endNodeWidth / 2 + this.wireWidth / 2;
-            endY = height - endNodeHeight / 2 + this.wireWidth; 
+            startY = startNodeHeight / 2;
+            endX = width - endNodeWidth / 2;
+            endY = height - endNodeHeight / 2; 
         } else if(dx < 0 && dy >= 0) {
-            width += startNodeWidth;
-            height += endNodeHeight;
+            width += startNodeWidth + 2 * this.borderWidth;
+            height += endNodeHeight - 2 * this.borderWidth;
 
-            this.element.style.left = `${x0 - width + startNodeWidth - this.wireWidth / 2}px`;
-            this.element.style.top = `${y0 - this.wireWidth / 2}px`;
-            this.element.style.width = `${width + this.wireWidth}px`;
-            this.element.style.height = `${height + this.wireWidth}px`;
+            this.element.style.left = `${x0 - width + startNodeWidth}px`;
+            this.element.style.top = `${y0}px`;
+            this.element.style.width = `${width}px`;
+            this.element.style.height = `${height}px`;
 
-            startX = width - startNodeWidth / 2 + this.wireWidth / 2;
-            startY = startNodeHeight / 2 + this.wireWidth;
-            endX = endNodeWidth / 2 + this.wireWidth / 2;
+            startX = width - startNodeWidth / 2;
+            startY = startNodeHeight / 2;
+            endX = endNodeWidth / 2;
             endY = height - endNodeHeight / 2; 
         } else if(dx >= 0 && dy < 0) {
-            width += endNodeWidth;
-            height += startNodeHeight;
+            width += endNodeWidth - 2 * this.borderWidth;
+            height += startNodeHeight + 2 * this.borderWidth;
 
-            this.element.style.left = `${x0 + this.wireWidth / 2}px`;
+            this.element.style.left = `${x0}px`;
             this.element.style.top = `${y0 - height + startNodeHeight}px`;
-            this.element.style.width = `${width + this.wireWidth}px`;
-            this.element.style.height = `${height + this.wireWidth}px`;
+            this.element.style.width = `${width}px`;
+            this.element.style.height = `${height}px`;
 
-            startX = startNodeWidth / 2 - this.wireWidth / 2;
+            startX = startNodeWidth / 2;
             startY = height - startNodeHeight / 2;
-            endX = width - endNodeWidth / 2 - this.wireWidth / 2;
+            endX = width - endNodeWidth / 2;
             endY = endNodeHeight / 2; 
         } else if(dx < 0 && dy < 0) {
-            width += startNodeWidth;
-            height += startNodeHeight;
+            width += startNodeWidth + 2 * this.borderWidth;
+            height += startNodeHeight + 2 * this.borderWidth;
 
             this.element.style.left = `${x0 - width + startNodeWidth}px`;
             this.element.style.top = `${y0 - height + startNodeHeight}px`;
-            this.element.style.width = `${width + this.wireWidth}px`;
-            this.element.style.height = `${height + this.wireWidth}px`;
+            this.element.style.width = `${width}px`;
+            this.element.style.height = `${height}px`;
 
             startX = width - startNodeWidth / 2;
             startY = height - startNodeHeight / 2;
